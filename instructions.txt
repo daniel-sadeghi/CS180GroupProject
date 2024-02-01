@@ -1,0 +1,41 @@
+To get started with working in React and Expo, follow the instructions found here:
+https://react.dev/learn/start-a-new-react-project
+
+Download Node.js
+https://nodejs.org/en/
+
+Important part of the React Page is the Expo portion:
+Using Expo (for native apps) 
+
+Using Next.js (Have to work on this part still)
+
+Figma is a Prototyping Application that allows us to vizualize what we want the app to look like.
+I added elements that you guys can use and made a basic couple of screens you guys can add to.
+This is mostly for frontend design but will also help us find out what we need to add for the backend.
+Figma Link: https://www.figma.com/file/fvsE658wmqywmAhucnHokX/App-Prototype?type=design&node-id=0%3A1&mode=design&t=M5qEak7TXLaAAofg-1
+
+WHen working with Expo, here's a tutorial on how to get started, I have made a starting project that you guys can look at.
+https://docs.expo.dev/tutorial/introduction/
+
+To start the app type:
+npm start -- --reset-cache
+
+To get expo commands to work you have to open windows powershell as an administrator and type:
+Set-ExecutionPolicy RemoteSigned
+
+If you need to reset the node modules use the commands:
+rm -rf node_modules package-lock.json 
+npm install
+
+or 
+
+Remove-Item -Recurse -Force node_modules package-lock.json
+npm install
+
+Some helpful commands that fixed errors for me:
+npm install -g npm@latest
+npm cache clean -f
+npm install react-navigation react-navigation-stack react-navigation-tabs
+expo install react-native-reanimated 
+npm install --save babel-preset-expo
+expo upgrade
