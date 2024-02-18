@@ -1,2 +1,2 @@
-Hello
 
+To start expo, go to recipe-expo-app and run npx expo start

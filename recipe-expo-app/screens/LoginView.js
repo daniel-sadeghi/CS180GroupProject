@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-function LoginScreen({ navigation }) {
+function LoginView({ navigation }) {
   return (
     <View>
       <Text>Login Screen</Text>
@@ -10,4 +10,4 @@ function LoginScreen({ navigation }) {
   );
 }
 
-export default LoginScreen;
+export default LoginView;

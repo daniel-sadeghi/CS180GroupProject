@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-function UserProfileScreen({ navigation }) {
+function FavoritesView({ navigation }) {
   return (
     <View>
-      <Text>User Profile Screen</Text>
+      <Text>Favorites View</Text>
       {/* Display user profile information here */}
     </View>
   );
 }
 
-export default UserProfileScreen;
+export default FavoritesView;

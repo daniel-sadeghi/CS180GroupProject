@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Button } from 'react-native';
 
-function HomeScreen({ navigation }) {
+function HomeView({ navigation }) {
   return (
     <View style={styles.container}>
       <Text>Welcome to Recipe Sharing App!</Text>
@@ -15,7 +15,7 @@ function HomeScreen({ navigation }) {
   );
 }
 
-export default HomeScreen;
+export default HomeView;
 
 const styles = StyleSheet.create({
   container: {

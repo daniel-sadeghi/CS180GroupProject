@@ -1,20 +1,21 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from '../screens/HomeScreen'; // Import your Home screen component
-import SignUpScreen from '../screens/SignUpScreen';
-import LoginScreen from '../screens/LoginScreen';
-import UserProfileScreen from '../screens/UserProfileScreen';
-
+import HomeView from '../screens/HomeView'; // Import your Home screen component
+import ProfileView from '../screens/ProfileView.js';
+import CartView from '../screens/CartView';
+import SearchView from '../screens/SearchView'
+import FavoritesView from '../screens/FavoritesView'
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="SignUp" component={SignUpScreen} />
-      <Tab.Screen name="Login" component={LoginScreen} />
-      <Tab.Screen name="UserProfile" component={UserProfileScreen} />
-    </Tab.Navigator>
+        <Tab.Screen name="Cart" component={CartView} />
+        <Tab.Screen name="Home" component={HomeView} />
+        <Tab.Screen name="Search" component={SearchView} />
+        <Tab.Screen name="Favorites" component={FavoritesView} />
+        <Tab.Screen name="Profile" component={ProfileView} />
+        </Tab.Navigator>
   );
 };
 

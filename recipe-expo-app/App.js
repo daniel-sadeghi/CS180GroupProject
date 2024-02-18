@@ -1,15 +1,15 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import MainStack from './navigation/MainStack';
+//import MainStack from './navigation/MainStack';
 import TabNavigator from './navigation/TabNavigator';
-
-function App() {
+//Tapping on a recipe is probably going to need this StackNavigator to open a view that displays more information about the recipe
+const App = () => {
   return (
     <NavigationContainer>
       {/* <MainStack /> */}
       <TabNavigator />
     </NavigationContainer>
   );
-}
+};
 
 export default App;
