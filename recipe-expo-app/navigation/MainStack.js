@@ -1,19 +1,19 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from '../screens/HomeScreen'; 
-import SignUpScreen from '../screens/SignUpScreen';
-import LoginScreen from '../screens/LoginScreen';
-import UserProfileScreen from '../screens/UserProfileScreen';
+import ProfileView from '../screens/ProfileView';
+import HomeView from '../screens/HomeView';
+import SignUpView from '../screens/SignUpView';
+import LoginView from '../screens/LoginView';
 
 const Stack = createStackNavigator();
 
 const MainStack = () => {
   return (
     <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="SignUp" component={SignUpScreen} />
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="UserProfile" component={UserProfileScreen} />
+      <Stack.Screen name="Home" component={HomeView} />
+      <Stack.Screen name="SignUp" component={SignUpView} />
+      <Stack.Screen name="Login" component={LoginView} />
+      <Stack.Screen name="UserProfile" component={ProfileView} />
     </Stack.Navigator>
   );
 };
