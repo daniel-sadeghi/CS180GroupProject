@@ -1,18 +1,21 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Button } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, Button} from 'react-native';
+import Recipe from '../components/RecipeComponent'
 
 function HomeView({ navigation }) {
-  return (
-    <View style={styles.container}>
-      <Text>Welcome to Recipe Sharing App!</Text>
-      <Button
-        title="Sign Up here!"
-        onPress={() => navigation.navigate('SignUp')}
-        color="#3498db" // Custom color for the button
-      />
-    </View>
-  );
+    return(
+        <SafeAreaView style={styles.container}>
+            <ScrollView>
+                <Recipe
+                    imageSource={require('../assets/ratatouille.jpg')}
+                    bannerText="ratatouille"
+                />
+
+                <Recipe/>
+                <Recipe/>
+            </ScrollView>
+        </SafeAreaView>
+    );
 }
 
 export default HomeView;
