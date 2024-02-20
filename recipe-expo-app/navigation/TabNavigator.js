@@ -5,13 +5,14 @@ import ProfileView from '../screens/ProfileView.js';
 import CartView from '../screens/CartView';
 import SearchView from '../screens/SearchView'
 import FavoritesView from '../screens/FavoritesView'
+import MainStack from './MainStack.js';
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
   return (
     <Tab.Navigator>
         <Tab.Screen name="Cart" component={CartView} />
-        <Tab.Screen name="Home" component={HomeView} />
+        <Tab.Screen name="Home" component={MainStack} />
         <Tab.Screen name="Search" component={SearchView} />
         <Tab.Screen name="Favorites" component={FavoritesView} />
         <Tab.Screen name="Profile" component={ProfileView} />

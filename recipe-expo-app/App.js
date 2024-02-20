@@ -6,7 +6,6 @@ import TabNavigator from './navigation/TabNavigator';
 const App = () => {
   return (
     <NavigationContainer>
-      {/* <MainStack /> */}
       <TabNavigator />
     </NavigationContainer>
   );

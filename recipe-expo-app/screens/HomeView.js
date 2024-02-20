@@ -1,13 +1,19 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, Button} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, Button, useState, TouchableOpacity} from 'react-native';
 import Recipe from '../components/RecipeComponent'
+
 
 function HomeView({ navigation }) {
     return(
         <SafeAreaView style={styles.container}>
             <ScrollView>
-            <Text style= {styles.text}>Welcome to the recipe app </Text>
-            <Text style= {styles.text}> Explore </Text>
+                <Text style= {styles.text}>Welcome to the recipe app </Text>
+                <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+                    <Text style= {styles.button}>Register</Text>
+                 </TouchableOpacity>
+                 <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                    <Text style= {styles.button}>Log in</Text>
+                 </TouchableOpacity>
                 <Recipe
                     imageSource={require('../assets/ratatouille.jpg')}
                     bannerText="ratatouille"  
@@ -43,5 +49,11 @@ const styles = StyleSheet.create({
     color: 'blue',
     fontSize: 16,
     marginVertical: 10,
+  },
+  button: {
+    color: 'blue',
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
   },
 });
