@@ -4,7 +4,7 @@ import {View, StyleSheet, Image, Text} from 'react-native';
 const Recipe = ({ imageSource, bannerText }) => {
   return (
     <View style={styles.container}>
-      <Image source={imageSource} style={styles.image} resizeMode="cover" />
+      <Image source={imageSource} style={styles.image} resizeMode="contain" />
       <View style={styles.banner}>
         <Text style={styles.bannerText}>{bannerText}</Text>
       </View>
@@ -14,21 +14,18 @@ const Recipe = ({ imageSource, bannerText }) => {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 20,
-    overflow: 'hidden',
-    borderWidth: 1,
-    marginVertical: 10,
-    marginHorizontal: 20,
+    flex: 1, // Adjust this value as needed
   },
   image: {
     width: '100%',
-    aspectRatio: 16 / 9, // Assuming aspect ratio of the image
+    aspectRatio: 9/16, // Assuming aspect ratio of the image
+    height: '100%',
   },
   banner: {
     backgroundColor: 'rgba(0, 0, 0, 0.6)', // Semi-transparent black background for the banner
-    padding: 10,
+    padding: 9.5,
     position: 'absolute',
-    bottom: 0,
+    bottom: '17%',
     left: 0,
     right: 0,
     borderBottomLeftRadius: 20,
