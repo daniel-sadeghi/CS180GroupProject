@@ -1,12 +1,16 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TextInput, ScrollView } from 'react-native';
+import {useNavigation} from '@react-navigation/native'
 
 function SearchView({ navigation }) {
   return (
-    <View>
-      <Text>Search View</Text>
-      {/* Display user profile information here */}
-    </View>
+        <ScrollView>
+            <TextInput 
+             placeholder='Search Recipes'
+            style={{borderWidth:1}}
+            />
+
+        </ScrollView>
   );
 }
 
