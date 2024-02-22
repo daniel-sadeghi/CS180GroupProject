@@ -32,6 +32,8 @@ app.use("/test", require("./routes/test"));
 app.use("/profile", require("./routes/profile"));
 
 
+app.use("/favorites", require("./routes/favorites"));
+
 app.listen(PORT, () => {
     console.log(`server has started on port ${PORT}`);
 }); 
