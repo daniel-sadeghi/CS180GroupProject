@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, Button } from 'react-native';
+import { View, Text, Image, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 // npx expo install expo-image-picker -- --force
 import Constants from 'expo-constants';
 // npx expo install expo-constants -- --force        
 import * as Permissions from 'expo-permissions';
 // npx expo install expo-permissions -- --force    
+import placeholder from "../assets/default-profilepic.jpg";
 
 function ProfileView({ navigation }) {
   const [image, setImage] = useState(null);
@@ -27,10 +28,17 @@ function ProfileView({ navigation }) {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.cancelled) {
-      setImage(result.assets[0].uri);
+       setImage(result.assets[0].uri);
+    }
+
+    const saveImage = async () => {
+      try {
+        await AsyncStorage.setItem('profileImage', result.assets[0].uri);
+        setModalVisible(false);
+      } catch (error) {
+        console.log('Error saving image:', error);
+      }
     }
   };
 
@@ -38,14 +46,13 @@ function ProfileView({ navigation }) {
     <View style={styles.container}>
       {/* Display user profile information here */}
       {/* <Image
-        source={require('../assets/profile.jpeg')}
-        
+        source={require('../assets/default-profilepic.jpg')}
         style={styles.profilePicture}
       /> */}
       {console.log('Image URI:', image)}
       {image && (
       <Image 
-        source={{ uri: image }} 
+        source={image ? { uri: image } : placeholder} 
         style={styles.profilePicture} 
         onLoad={() => {
           console.log("Image loaded");
@@ -53,7 +60,7 @@ function ProfileView({ navigation }) {
         onError={(error) => console.log('Image error', error)}
       />
       )}
-      <Button title="Select Photo" onPress={pickImage} />
+      <Button title="Edit Photo" onPress={pickImage} />
       <Text style={styles.name}>{"John Doe"}</Text>
       {/* Have the users name above*/}
       <Text style={styles.email}>{"JohnDoe@email.com"}</Text> 
@@ -73,10 +80,11 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    marginBottom: 20,
+    marginBottom: 5,
   },
   name: {
     fontSize: 20,
+    color: '#13A306',
     fontWeight: 'bold',
   },
   email: {
