@@ -16,6 +16,7 @@ const TabNavigator = () => {
       screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
+            let iconColor = focused ? 'green' : color; // Set icon color to green if focused, otherwise use the default color
             if (route.name === 'Home') {
               iconName = focused ? 'home' : 'home-outline';
             } else if (route.name === 'Search') {
@@ -27,7 +28,7 @@ const TabNavigator = () => {
             } else if (route.name === 'Cart') {
               iconName = focused ? 'cart' : 'cart-outline';
             }
-            return <Ionicons name={iconName} size={size} color={color} />;
+            return <Ionicons name={iconName} size={size} color={iconColor} />;
           },
       })}
     >
