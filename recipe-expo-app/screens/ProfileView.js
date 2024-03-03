@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, Button, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, Button, TouchableOpacity, Modal, TouchableHighlight } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 // npx expo install expo-image-picker -- --force
 import Constants from 'expo-constants';
@@ -7,17 +7,14 @@ import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 // npx expo install expo-permissions -- --force    
 import { Ionicons } from '@expo/vector-icons';
-import placeholder from '../assets/default-profilepic.jpg';
 
 function ProfileView({ navigation }) {
   const [image, setImage] = useState(undefined);
-  const getPermissionAsync = async () => {
-    if (Constants.platform.ios) {
-      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-      if (status !== 'granted') {
-        alert('Sorry, we need camera roll permissions to make this work!');
-      }
-    }
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItems, setSelectedItems] = useState({});
+
+  const handlePress = (item) => {
+    setSelectedItems(prevState => ({ ...prevState, [item]: !prevState[item] }));
   };
 
   const pickImage = async () => {
@@ -28,7 +25,7 @@ function ProfileView({ navigation }) {
       quality: 1,
     });
 
-    if (!result.cancelled) {
+    if (!result.canceled) {
        setImage(result.assets[0].uri);
     }
 
@@ -44,21 +41,6 @@ function ProfileView({ navigation }) {
   return (
     <View style={styles.container}>
       {/* Display user profile information here */}
-      {/* <Image
-        source={require('../assets/default-profilepic.jpg')}
-        style={styles.profilePicture}
-      /> */}
-      {console.log('Image URI:', image)}
-      {/* {image && (
-      <Image 
-        source={image ? { uri: image } : require('../assets/default-profilepic.jpg')} 
-        style={[styles.profilePicture, { borderColor: 'green', borderWidth: 4 }]} 
-        onLoad={() => {
-          console.log("Image loaded");
-        }}
-        onError={(error) => console.log('Image error', error)}
-      />
-      )} */}
       {image ? (
           <Image
             source={{ uri: image }}
@@ -72,12 +54,62 @@ function ProfileView({ navigation }) {
         )
       }
       <TouchableOpacity onPress={pickImage} style={styles.cameraButton}>
-        <Ionicons name="camera" size={24} color="green" />
+        <Ionicons 
+          name="camera" 
+          size={24} 
+          color="green" />
       </TouchableOpacity>
-      <Text style={styles.name}>{"John Doe"}</Text>
+      <Text 
+        style={styles.name}>{"John Doe"}
+        </Text>
       {/* Have the users name above*/}
-      <Text style={styles.email}>{"JohnDoe@email.com"}</Text> 
+      <Text 
+        style={styles.email}>{"JohnDoe@email.com"}
+      </Text> 
       {/* Have the users email above*/}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TouchableOpacity style={selectedItems['item1'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item1')}>
+              <Image source={require('../assets/vegan.png')} style={styles.icon}/>
+              <Text style={styles.menuItemText}>Vegan</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={selectedItems['item2'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item2')}>
+              <Image source={require('../assets/nogluten.png')} style={styles.icon}/>
+              <Text style={styles.menuItemText}>Gluten Free</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={selectedItems['item3'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item3')}>
+              <Image source={require('../assets/nonlactose.png')} style={styles.icon}/>
+              <Text style={styles.menuItemText}>Lactose</Text>
+            </TouchableOpacity>
+
+            <TouchableHighlight
+              style={{ ...styles.openButton, backgroundColor: "green" }}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <Text style={styles.textStyle}>Hide Menu</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          setModalVisible(true);
+        }}
+      >
+        <Text style={styles.textStyle}>Dietary Restrictions</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -89,11 +121,52 @@ const styles = StyleSheet.create({
     position: 'absolute' ,top: -200, left: 0, right: 0, bottom: 200,
     alignItems: 'center',
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    position: 'absolute' ,top: 150, left: 0, right: 0, bottom: 0,
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 30,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: '80%',
+    height: '40%',
+  },
+  openButton: {
+    backgroundColor: "#F194FF",
+    borderRadius: 30,
+    padding: 10,
+    elevation: 2,
+    marginTop: 20,
+  },
+  button: {
+    backgroundColor: 'green',
+    padding: 10,
+    borderRadius: 30,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
   profilePicture: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    marginBottom: -15,
+    marginBottom: -17.5,
   },
   name: {
     fontSize: 20,
@@ -111,6 +184,34 @@ const styles = StyleSheet.create({
   email: {
     fontSize: 16,
     color: 'gray',
+    marginBottom: 20,
+  },
+  selectedMenuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#ddd',
+    width:'100%',
+    height: 50,
+    borderColor: 'green',
+    borderWidth: 1,
+    borderRadius: 5,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    width:'100%',
+    height: 50,
+  },
+  menuItemText: {
+    marginLeft: 10,
+    fontSize: 18,
+    color: '#333',
+  },
+  icon: {
+    width: 20,
+    height: 20,
   },
 });
 
