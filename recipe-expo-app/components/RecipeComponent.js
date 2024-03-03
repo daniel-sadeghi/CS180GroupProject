@@ -1,15 +1,17 @@
 import React from 'react';
-import {View, StyleSheet, Image, Text} from 'react-native';
+import {View, StyleSheet, Image, Text, ActivityIndicator} from 'react-native';
 
-const Recipe = ({ imageSource, bannerText }) => {
-  return (
-    <View style={styles.container}>
-      <Image source={imageSource} style={styles.image} resizeMode="contain" />
-      <View style={styles.banner}>
-        <Text style={styles.bannerText}>{bannerText}</Text>
-      </View>
-    </View>
-  );
+const Recipe = (props) => {
+    const {title, image} = props;
+
+    return (
+        <View style={styles.container}>
+            <Image source={{uri: image}} style={styles.image} resizeMode="contain" />
+            <View style={styles.banner}>
+                <Text style={styles.bannerText}>{title}</Text>
+            </View>
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
