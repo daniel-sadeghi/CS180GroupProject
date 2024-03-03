@@ -30,7 +30,7 @@ app.use("/test", require("./routes/test"));
 //return user info.
 
 app.use("/profile", require("./routes/profile"));
-
+app.use("/shoppingList", require("./routes/shoppingList"));
 
 app.use("/favorites", require("./routes/favorites"));
 
@@ -41,3 +41,4 @@ app.listen(PORT, () => {
 /* app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "client/build/index.html"));
 }); */
+

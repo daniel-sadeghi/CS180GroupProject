@@ -33,7 +33,7 @@ CREATE TABLE todos(
 CREATE TABLE favorites(
 
   favorite_id SERIAL,
-  food_id INTEGER NOT NULL,
+  food_id INTEGER NOT NULL, f
   title VARCHAR(255) NOT NULL,
   image VARCHAR(255) NOT NULL,
   sourceUrl VARCHAR(255) NOT NULL,
@@ -45,18 +45,22 @@ CREATE TABLE favorites(
 );
 
 /*  */
-CREATE TABLE shoppingList(
 
+
+CREATE TABLE shoppingList (
   shopping_id SERIAL,
   user_id UUID,
-  description VARCHAR(255),
+  ingredient VARCHAR(255),
+  amount INT,
+  price FLOAT,
   PRIMARY KEY (shopping_id),
   FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-
-
 INSERT INTO users (user_name, user_email, user_password) VALUES ('henry', 'henryly213@gmail.com', 'kthl8822');
+
+
+
 
 insert into todos (user_id, description) values ('2f99fecb-a819-42a2-b5c8-e0d0f6d1c291', 'clean room'),
 ('3912a13a-f72c-45df-90e8-a4a2c60f408b', 'do laundry'),

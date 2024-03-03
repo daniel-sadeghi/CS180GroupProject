@@ -19,10 +19,10 @@ module.exports = router;
 router.post("/", authorization, async (req, res) => {
 try {
     console.log(req.body);
-    const { description } = req.body;
+    const {food_id, title, imageURL, sourceURL, spoonacularSourceUrl} = req.body;
     const newTodo = await pool.query(
-    "INSERT INTO favorites (user_id, description) VALUES ($1, $2) RETURNING *",
-    [req.user.id, description]
+    "INSERT INTO favorites (food_id, title, imageURL, sourceURL, spoonacularSourceUrl, user_id) VALUES ($1, $2) RETURNING *",
+    [food_id, title, imageURL, sourceURL, spoonacularSourceUrl, req.user.id]
     );
 
     res.json(newTodo.rows[0]);
