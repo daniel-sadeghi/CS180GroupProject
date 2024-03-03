@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, Button, TouchableOpacity, Modal, TouchableHighlight } from 'react-native';
+import { View, Text, Image, StyleSheet, Button, TouchableOpacity, Modal, TouchableHighlight, ImageBackground } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 // npx expo install expo-image-picker -- --force
-import Constants from 'expo-constants';
-// npx expo install expo-constants -- --force        
-import * as Permissions from 'expo-permissions';
-// npx expo install expo-permissions -- --force    
 import { Ionicons } from '@expo/vector-icons';
 
 function ProfileView({ navigation }) {
