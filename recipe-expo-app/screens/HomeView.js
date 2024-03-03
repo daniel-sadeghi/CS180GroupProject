@@ -8,11 +8,13 @@ function HomeView({ navigation }) {
     let [response, setResponse] = useState();
 
     useEffect(() => {
-        const URI = 'https://api.spoonacular.com/recipes/complexSearch';
+        const URI = 'https://api.spoonacular.com/recipes/random';
         const API_KEY = "0e05e31e1192449ab972630943bc0865" //TODO Fetch the API Key from the backend server
 
-        const url = URI + '?' 
+        const url = URI + '?number=5&' 
             + `apiKey=${API_KEY}`;
+
+            console.log(url);
         //Fetch the API response, then funnel the result through a pipeline. First, parse the JSON, then store it to state
         //
         //
@@ -22,8 +24,8 @@ function HomeView({ navigation }) {
                 console.log('Here is the response');
                 console.log(res);
                 console.log('Here are the results');
-                console.log(res.results);
-                setResponse(res.results);
+                console.log(res.recipes);
+                setResponse(res.recipes);
 
             } catch (error) {
                 console.log('Error!');
