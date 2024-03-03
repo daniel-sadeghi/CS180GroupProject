@@ -8,22 +8,19 @@ function HomeView({ navigation }) {
     let [response, setResponse] = useState();
 
     useEffect(() => {
-        const URI = 'https://api.spoonacular.com/recipes/complexSearch';
+        const URI = 'https://api.spoonacular.com/recipes/random';
         const API_KEY = "0e05e31e1192449ab972630943bc0865" //TODO Fetch the API Key from the backend server
 
-        const url = URI + '?' 
+        const url = URI + '?number=5&' 
             + `apiKey=${API_KEY}`;
+
         //Fetch the API response, then funnel the result through a pipeline. First, parse the JSON, then store it to state
         //
         //
         const fetchRecipe = async () => {
             try {
                 const res = await fetch(url).then(response => response.json());
-                console.log('Here is the response');
-                console.log(res);
-                console.log('Here are the results');
-                console.log(res.results);
-                setResponse(res.results);
+                setResponse(res.recipes);
 
             } catch (error) {
                 console.log('Error!');
@@ -51,7 +48,7 @@ function HomeView({ navigation }) {
 
     return(
         <SafeAreaView style={styles.container}>
-            <ScrollView>
+            <ScrollView contentContainerStyle={styles.contentContainer}>
                 {getHomeRecipes()}
             </ScrollView>
         </SafeAreaView>
@@ -67,6 +64,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#ecf0f1',
   },
+    contentContainer: {
+    },
   text: {
     fontSize: 20,
     textAlign: 'center',
