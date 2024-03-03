@@ -51,7 +51,7 @@ function HomeView({ navigation }) {
 
     return(
         <SafeAreaView style={styles.container}>
-            <ScrollView>
+            <ScrollView contentContainerStyle={styles.contentContainer}>
                 {getHomeRecipes()}
             </ScrollView>
         </SafeAreaView>
@@ -67,6 +67,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#ecf0f1',
   },
+    contentContainer: {
+    },
   text: {
     fontSize: 20,
     textAlign: 'center',
