@@ -1,8 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, Button, ActivityIndicator} from 'react-native';
-import Recipe from '../components/RecipeComponent'
+import Recipe from '../components/RecipeComponent';
+import { useAuth } from '../contexts/AuthContext';
+import LogoutButton from '../contexts/LogoutButton';
 
 function HomeView({ navigation }) { 
+    const { isLoggedIn, login } = useAuth();
     let [isLoading, setIsLoading] = useState(true);
     let [error, setError] = useState();
     let [response, setResponse] = useState();
@@ -28,7 +31,7 @@ function HomeView({ navigation }) {
                 setResponse(res.recipes);
 
             } catch (error) {
-                console.log('Error!');
+                 console.log('Error!');
                 
             }
             setIsLoading(false);
@@ -54,6 +57,20 @@ function HomeView({ navigation }) {
     return(
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.contentContainer}>
+            {isLoggedIn ? (
+                <LogoutButton />
+                ) : (
+                <>
+            <Button
+                title="Sign Up here!"
+                onPress={() => navigation.navigate('SignUp')}
+                />
+            <Button
+                title="Login here!"
+                onPress={() => navigation.navigate('Login')}
+                />
+                </>
+                )}
                 {getHomeRecipes()}
             </ScrollView>
         </SafeAreaView>

@@ -1,55 +1,60 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button, ScrollView, ActivityIndicator } from 'react-native';
 import Recipe from '../components/RecipeComponent'
 import {useNavigation} from '@react-navigation/native'
 
 function SearchView({ navigation }) {
-  const [search, setSearch] = useState([]);
+  const [search, setSearch] = useState('');
+  const [results, setResults] = useState([]);
   let [error, setError] = useState();
   const API_KEY = '0e05e31e1192449ab972630943bc0865'; 
-  let [isLoading, setIsLoading] = useState(true);
+  let [isLoading, setIsLoading] = useState(false);
 
   async function fetchSearch(query) {
+    setIsLoading(true); // Set isLoading to true while fetching
     try {
         const response = await fetch(
             `https://api.spoonacular.com/recipes/complexSearch?query=${query}&apiKey=${API_KEY}`
         ).then(response => response.json());
         console.log("Here are the search responses");
-        console.log(response);
-        setSearch(response.results); // Update the suggestions state
+        console.log(response.results);
+        setResults(response.results); // Update the suggestions state
     } catch (error) {
         console.error('Error fetching search suggestions:', error);
     }
-    setIsLoading(false);
+    finally {
+      setIsLoading(false); // Set isLoading back to false
+    }
 }
 
-const getSearchResults = () => {
+const handleSearchSubmit = () => {
+  fetchSearch(search); // Call fetchSearch when the button is pressed
+};
+
+const renderRecipes = () => {
   if (isLoading) {
-      return <ActivityIndicator size='large' />;
+    return <ActivityIndicator size="large" />;
   }
   if (error) {
-      return <Text>Oops! {error}</Text>;
+    return <Text>Oops! {error}</Text>;
   }
-
-  return search.map(search => (
-          <Recipe key={search.id} title={search.title} image={search.image}/>
-      
+  return results.map((recipe) => (
+    <Recipe key={recipe.id} title={recipe.title} image={recipe.image} />
   ));
-}
+};
 
 
   return (
         <ScrollView>
             <TextInput
-              placeholder="Search Recipes"
-              style={{ borderWidth: 1 }}
-              onChangeText={text => {
-                setSearch([]); // Clear the recipe info when input changes
-                fetchSearch(text); // Fetch search suggestions
-              }}
-            />
-            {getSearchResults()}     
-                
+        placeholder="Search Recipes"
+        style={{ borderWidth: 1 }}
+        onChangeText={(text) => {
+          setSearch(text); // Update search state when input changes
+        }}
+      />
+      <Button title="Submit" onPress={handleSearchSubmit} color="#3498db" />
+      {renderRecipes()}   
         </ScrollView>
   );
 }
