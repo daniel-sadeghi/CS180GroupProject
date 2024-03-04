@@ -17,17 +17,12 @@ function HomeView({ navigation }) {
         const url = URI + '?number=5&' 
             + `apiKey=${API_KEY}`;
 
-            console.log(url);
         //Fetch the API response, then funnel the result through a pipeline. First, parse the JSON, then store it to state
         //
         //
         const fetchRecipe = async () => {
             try {
                 const res = await fetch(url).then(response => response.json());
-                console.log('Here is the response');
-                console.log(res);
-                console.log('Here are the results');
-                console.log(res.recipes);
                 setResponse(res.recipes);
 
             } catch (error) {
