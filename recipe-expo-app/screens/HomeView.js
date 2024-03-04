@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, Button, ActivityIndicator} from 'react-native';
 import Recipe from '../components/RecipeComponent';
 import { useAuth } from '../contexts/AuthContext';
-import LogoutButton from '../contexts/LogoutButton';
 
 function HomeView({ navigation }) { 
     const { isLoggedIn, login } = useAuth();
@@ -44,28 +43,13 @@ function HomeView({ navigation }) {
         }
 
         return response.map(response => (
-                <Recipe key={response.id} title={response.title} image={response.image}/>
-            
+                <Recipe key={response.id} title={response.title} image={response.image} />
         ));
     }
 
     return(
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.contentContainer}>
-            {isLoggedIn ? (
-                <LogoutButton />
-                ) : (
-                <>
-            <Button
-                title="Sign Up here!"
-                onPress={() => navigation.navigate('SignUp')}
-                />
-            <Button
-                title="Login here!"
-                onPress={() => navigation.navigate('Login')}
-                />
-                </>
-                )}
                 {getHomeRecipes()}
             </ScrollView>
         </SafeAreaView>

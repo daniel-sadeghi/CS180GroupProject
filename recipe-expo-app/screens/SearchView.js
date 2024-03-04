@@ -39,7 +39,7 @@ const renderRecipes = () => {
     return <Text>Oops! {error}</Text>;
   }
   return results.map((recipe) => (
-    <Recipe key={recipe.id} title={recipe.title} image={recipe.image} />
+    <Recipe key={recipe.id} title={recipe.title} image={recipe.image}/>
   ));
 };
 

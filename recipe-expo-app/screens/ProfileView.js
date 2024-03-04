@@ -1,13 +1,55 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, Button, TouchableOpacity, Modal, TouchableHighlight, ImageBackground } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, Button, TouchableOpacity, Modal, TouchableHighlight, ImageBackground, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 // npx expo install expo-image-picker -- --force
 import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
+import LogoutButton from '../contexts/LogoutButton';
 
 function ProfileView({ navigation }) {
   const [image, setImage] = useState(undefined);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItems, setSelectedItems] = useState({});
+  const [userData, setUserData] = useState([]);
+  const { token } = useAuth();
+  const { isLoggedIn, login } = useAuth();
+  let [isLoading, setIsLoading] = useState(false);
+
+  // Call the function when the component mounts or as needed
+  useEffect(() => {
+  const fetchUserData = async () => {
+
+    if(token != null){
+      console.log("Attempting to pull profile with token: ", token);
+      setIsLoading(true); // Set isLoading to true while fetching
+    try {
+      const response = await axios.get('https://jwt-postgre-tes.onrender.com/profile', {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      console.log(response.data);
+      setUserData(response.data);
+      console.log('User Data:', userData);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+    finally {
+      setIsLoading(false); // Set isLoading back to false
+    }
+    }
+    else{
+      console.log("Using guest context");
+    }
+  };
+    if(token){
+      fetchUserData();
+    }
+    else{
+      setIsLoading(false); // Set isLoading back to false
+    }
+  }, [token]);
 
   const handlePress = (item) => {
     setSelectedItems(prevState => ({ ...prevState, [item]: !prevState[item] }));
@@ -55,15 +97,13 @@ function ProfileView({ navigation }) {
           size={24} 
           color="green" />
       </TouchableOpacity>
-      <Text 
-        style={styles.name}>{"John Doe"}
-        </Text>
-      {/* Have the users name above*/}
-      <Text 
-        style={styles.email}>{"JohnDoe@email.com"}
-      </Text> 
-      {/* Have the users email above*/}
-      <Modal
+      {isLoading ? (
+        <ActivityIndicator size="large" />
+        ) : isLoggedIn ? (
+        <>
+          <Text style={styles.name}>{userData[0]?.user_name}</Text>
+          <Text style={styles.email}>{userData[0]?.user_email}</Text> 
+          <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
@@ -106,6 +146,19 @@ function ProfileView({ navigation }) {
       >
         <Text style={styles.textStyle}>Dietary Restrictions</Text>
       </TouchableOpacity>
+      <LogoutButton/>
+        </>
+      ) : (
+        <><Text style={styles.guest}>Welcome, Guest! Please log in to view your profile.</Text><>
+            <Button
+              title="Sign Up here!"
+              onPress={() => navigation.navigate('SignUp')} />
+            <Button
+              title="Login here!"
+              onPress={() => navigation.navigate('Login')} />
+              
+          </></>
+      )}
     </View>
   );
 }
@@ -163,11 +216,13 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     marginBottom: -17.5,
+    marginTop: 50,
   },
   name: {
     fontSize: 20,
     color: '#13A306',
     fontWeight: 'bold',
+    marginTop: 15,
   },
   editButton: {
     backgroundColor: 'green',
@@ -181,6 +236,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'gray',
     marginBottom: 20,
+  },
+  guest: {
+    fontSize: 16,
+    color: 'gray',
+    marginBottom: 20,
+    marginTop: 20,
+    textAlign: 'center',
   },
   selectedMenuItem: {
     flexDirection: 'row',

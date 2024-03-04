@@ -24,7 +24,7 @@ function LoginView({ navigation }) {
       console.log('Login successful. Token:', token);
       login(token);
 
-      navigation.navigate('Home');
+      navigation.navigate('Back');
 
     } catch (error) {
       if (error.response) {

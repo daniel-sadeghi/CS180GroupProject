@@ -70,7 +70,7 @@ function SignUpView({ navigation }) {
           // }
           login(token);
 
-          navigation.navigate('Home');
+          navigation.navigate('Back');
     } catch (error) {
       if (error.response) {
         // The request was made, but the server responded with a status code

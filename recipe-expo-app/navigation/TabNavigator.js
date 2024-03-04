@@ -33,10 +33,10 @@ const TabNavigator = () => {
       })}
     >
         <Tab.Screen name="Cart" component={CartView} />
-        <Tab.Screen name="Home" component={MainStack} />
+        <Tab.Screen name="Home" component={HomeView} />
         <Tab.Screen name="Search" component={SearchView} />
         <Tab.Screen name="Favorites" component={FavoritesView} />
-        <Tab.Screen name="Profile" component={ProfileView} />
+        <Tab.Screen name="Profile" component={MainStack} />
     </Tab.Navigator>
   );
 };
