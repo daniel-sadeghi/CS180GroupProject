@@ -41,25 +41,28 @@ const RecipeView = ({navigation, route}) => {
     }, []);
 
     const getIngredients = () => {
-        if (isLoading) {
-            return (
-                <View style={styles.loading}>
-                    <ActivityIndicator size='large' />
-                </View>
-            );
-        }
-        if (error) {
-            return <Text>Oops! {error}</Text>;
-        }
-        return <FlatList
+        return (
+                <FlatList
                     data={response.ingredients}
                     renderItem={({item}) => <Ingredient name={item.name} price={item.price} image={"https://spoonacular.com/cdn/ingredients_100x100/"+item.image}/>}
                     keyExtractor={item=>item.id}
-                />;
+                    style={styles.flatList}
+                />
+
+        );
     }
+
+    const loadingIndicator = () => {
+        return (
+            <View style={styles.loading}>
+                <ActivityIndicator size='large' />
+            </View>
+        );
+    }
+
     return (
         <SafeAreaView style={styles.safeArea}>
-            {getIngredients()}
+            {isLoading ? loadingIndicator() : getIngredients()}
         </SafeAreaView>
     );
 
@@ -71,9 +74,14 @@ const styles = StyleSheet.create({
     },
     loading: {
         flex: 1,
-        borderWidth: 1,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    flatList: {
+        flex: 3,
+    },
+    addToCart: {
+        flex: 1,
     },
 });
 
