@@ -33,7 +33,7 @@ const TabNavigator = ({navigation}) => {
       })}
     >
         <Tab.Screen name="Cart" component={CartView} />
-        <Tab.Screen name="Home" children={(props)=><MainStack navigation={props.navigation}/>}/>
+        <Tab.Screen name="Home" children={(props)=><HomeView navigation={props.navigation}/>}/>
         <Tab.Screen name="Search" component={SearchView} />
         <Tab.Screen name="Favorites" component={FavoritesView} />
         <Tab.Screen name="Profile" component={ProfileView} />
