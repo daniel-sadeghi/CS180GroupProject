@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, ActivityIndicator, ScrollView, FlatList, SafeAreaView} from 'react-native';
+import {View, Text, ActivityIndicator, ScrollView, FlatList, SafeAreaView, StyleSheet} from 'react-native';
 import Ingredient from '../components/Ingredient';
 
-
+//Route is an object that contains the props passed when using react navigate.
 const RecipeView = ({navigation, route}) => {
     //const [title, setTitle] = useState(route.params.title);
     //const [id, setKey] = useState(route.params.id);
@@ -42,7 +42,11 @@ const RecipeView = ({navigation, route}) => {
 
     const getIngredients = () => {
         if (isLoading) {
-            return <ActivityIndicator size='large' />;
+            return (
+                <View style={styles.loading}>
+                    <ActivityIndicator size='large' />
+                </View>
+            );
         }
         if (error) {
             return <Text>Oops! {error}</Text>;
@@ -54,11 +58,23 @@ const RecipeView = ({navigation, route}) => {
                 />;
     }
     return (
-        <SafeAreaView>
+        <SafeAreaView style={styles.safeArea}>
             {getIngredients()}
         </SafeAreaView>
     );
 
 }
+
+const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+    },
+    loading: {
+        flex: 1,
+        borderWidth: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+});
 
 export default RecipeView;
