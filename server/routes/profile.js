@@ -13,7 +13,7 @@ router.get("/", authorization, async (req, res) => {
     // );
 
     const user = await pool.query(
-      "SELECT u.user_name, t.todo_id, t.description FROM users AS u LEFT JOIN todos AS t ON u.user_id = t.user_id WHERE u.user_id = $1",
+      "SELECT user_id, user_name, user_email, restrictions, image FROM users WHERE user_id = $1",
       [req.user.id]
     );
 
@@ -23,6 +23,28 @@ router.get("/", authorization, async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+
+
+//update restriction :
+
+router.patch('/restrictions', authorization, async (req, res) => {
+  const userId = req.user.id; // Assuming you have user_id in req.user.id
+
+  try {
+    const { restriction } = req.body; // Assuming the client sends the updated restriction in the request body
+
+    // Update the restriction field for the specific user in the database
+    const updateQuery = 'UPDATE users SET restrictions = $1 WHERE user_id = $2';
+    await pool.query(updateQuery, [restriction, userId]);
+
+    res.status(200).json({ message: 'Restriction updated successfully' });
+  } catch (error) {
+    console.error('Error updating restriction:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 
 //create a todo
 
