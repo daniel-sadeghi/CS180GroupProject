@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
-const TabNavigator = () => {
+const TabNavigator = ({navigation}) => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -33,7 +33,7 @@ const TabNavigator = () => {
       })}
     >
         <Tab.Screen name="Cart" component={CartView} />
-        <Tab.Screen name="Home" component={HomeView} />
+        <Tab.Screen name="Home" children={(props)=><HomeView navigation={props.navigation}/>}/>
         <Tab.Screen name="Search" component={SearchView} />
         <Tab.Screen name="Favorites" component={FavoritesView} />
         <Tab.Screen name="Profile" component={MainStack} />

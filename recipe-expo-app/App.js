@@ -8,7 +8,9 @@ const App = () => {
     return (
         <AuthProvider>
         <NavigationContainer>
-            <TabNavigator />
+        <Stack.Navigator>
+                <Stack.Screen name="MainView" component={TabNavigator} options={{headerShown: false}}/>
+        </Stack.Navigator>
         </NavigationContainer>
         </AuthProvider>
     );
