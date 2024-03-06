@@ -64,7 +64,7 @@ function ProfileView({ navigation }) {
       </Text> 
       {/* Have the users email above*/}
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
@@ -74,18 +74,26 @@ function ProfileView({ navigation }) {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <TouchableOpacity style={selectedItems['item1'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item1')}>
+              <Image source={require('../assets/glutenfree.png')} style={styles.icon}/>
+              <Text style={styles.menuItemText}>Gluten Free</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={selectedItems['item2'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item2')}>
+              <Image source={require('../assets/ketogenic.png')} style={styles.icon}/>
+              <Text style={styles.menuItemText}>Ketogenic</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={selectedItems['item3'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item3')}>
+              <Image source={require('../assets/vegetarian.png')} style={styles.icon}/>
+              <Text style={styles.menuItemText}>Vegetarian</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={selectedItems['item4'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item4')}>
               <Image source={require('../assets/vegan.png')} style={styles.icon}/>
               <Text style={styles.menuItemText}>Vegan</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={selectedItems['item2'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item2')}>
-              <Image source={require('../assets/nogluten.png')} style={styles.icon}/>
-              <Text style={styles.menuItemText}>Gluten Free</Text>
+            <TouchableOpacity style={selectedItems['item5'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item5')}>
+              <Image source={require('../assets/pescetarian.png')} style={styles.icon}/>
+              <Text style={styles.menuItemText}>Pescetarian</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={selectedItems['item3'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item3')}>
-              <Image source={require('../assets/nonlactose.png')} style={styles.icon}/>
-              <Text style={styles.menuItemText}>Lactose</Text>
-            </TouchableOpacity>
-
+            
             <TouchableHighlight
               style={{ ...styles.openButton, backgroundColor: "green" }}
               onPress={() => {
@@ -120,7 +128,7 @@ const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: "center",
-    position: 'absolute' ,top: 150, left: 0, right: 0, bottom: 0,
+    position: 'absolute' ,top: 175, left: 0, right: 0, bottom: -50,
     alignItems: "center",
     marginTop: 22
   },
@@ -138,15 +146,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: '80%',
-    height: '40%',
+    width: '60%',
+    height: '50%',
   },
   openButton: {
     backgroundColor: "#F194FF",
     borderRadius: 30,
     padding: 10,
     elevation: 2,
-    marginTop: 20,
+    marginTop: 15,
   },
   button: {
     backgroundColor: 'green',
