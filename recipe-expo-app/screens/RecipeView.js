@@ -3,6 +3,8 @@ import {View, Text, Pressable, ActivityIndicator, ScrollView, FlatList, SafeArea
 import Ingredient from '../components/Ingredient';
 import AddToCartButton from '../components/AddToCartButton';
 import FavoriteButton from '../components/FavoriteButton';
+import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
 
 //Route is an object that contains the props passed when using react navigate.
 const RecipeView = ({navigation, route}) => {
@@ -13,6 +15,9 @@ const RecipeView = ({navigation, route}) => {
     const [error, setError] = useState();
     let title = route.params.title;
     let id = route.params.id;
+    const { isLoggedIn, login } = useAuth();
+    const { token } = useAuth();
+    const [favortieStartState, setFavoriteStartState] = useState(false);
 
     useEffect(()=>{
         const URI = `https://api.spoonacular.com/recipes/${id}/priceBreakdownWidget.json`;
@@ -57,7 +62,7 @@ const RecipeView = ({navigation, route}) => {
                     <AddToCartButton style={styles.addToCartButton}>
                         <Text style={{color: "white", fontWeight: "bold", textAlign: "center"}}>Add To Cart</Text>
                     </AddToCartButton>
-                    <FavoriteButton/>
+                    {isLoggedIn ? <FavoriteButton isHeartToggled={favortieStartState} /> : null}
                 </View>
             </View>
         );
@@ -70,6 +75,47 @@ const RecipeView = ({navigation, route}) => {
             </View>
         );
     }
+
+    function isIdInFavorites(idToCheck, json) {
+        for (const item of json.items) {
+          if (item.id === idToCheck) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+    const favortieStartCheck = async () => {
+        if(token != null){
+            console.log("Attempting to pull favorites with token: ", token);
+            
+          try {
+            const res = await axios.get('https://jwt-postgre-tes.onrender.com/favorites', {
+              headers: {
+                Authorization: `${token}`,
+              },
+            });
+            console.log('favorites data: ' , res.data);
+            if(res.data != null){
+            const idExists = isIdInFavorites(response.id, res.data);
+            if(!idExists){
+                setFavoriteStartState(false);
+            }
+            else{
+                setFavoriteStartState(true);
+            }
+            }else{
+                setFavoriteStartState(false);
+            }
+          } catch (error) {
+            console.error('Error fetching user favorites:', error);
+          }
+          }
+          else{
+            console.log("Not Logged in");
+          }
+    }
+
 
     return (
         <SafeAreaView style={styles.safeArea}>
