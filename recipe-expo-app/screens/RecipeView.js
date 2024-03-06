@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, Pressable, ActivityIndicator, ScrollView, FlatList, SafeAreaView, StyleSheet} from 'react-native';
 import Ingredient from '../components/Ingredient';
 import AddToCartButton from '../components/AddToCartButton';
+import FavoriteButton from '../components/FavoriteButton';
 
 //Route is an object that contains the props passed when using react navigate.
 const RecipeView = ({navigation, route}) => {
@@ -56,6 +57,7 @@ const RecipeView = ({navigation, route}) => {
                     <AddToCartButton style={styles.addToCartButton}>
                         <Text style={{color: "white", fontWeight: "bold", textAlign: "center"}}>Add To Cart</Text>
                     </AddToCartButton>
+                    <FavoriteButton/>
                 </View>
             </View>
         );
