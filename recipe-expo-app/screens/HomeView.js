@@ -3,9 +3,9 @@ import { View, Text, StyleSheet, ScrollView, SafeAreaView, Button, ActivityIndic
 import Recipe from '../components/RecipeComponent'
 
 function HomeView({ navigation }) { 
-    let [isLoading, setIsLoading] = useState(true);
-    let [error, setError] = useState();
-    let [response, setResponse] = useState();
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState();
+    const [response, setResponse] = useState();
 
     useEffect(() => {
         const URI = 'https://api.spoonacular.com/recipes/random';
@@ -19,13 +19,15 @@ function HomeView({ navigation }) {
         //
         const fetchRecipe = async () => {
             try {
+                console.log(`Fetching ${URI}`);
                 const res = await fetch(url).then(response => response.json());
                 setResponse(res.recipes);
 
             } catch (error) {
-                console.log('Error!');
+                console.log(`Error: No response from ${URI}`);
                 
             }
+            console.log(`Success: Fetched response from ${URI}`);
             setIsLoading(false);
         };
 
@@ -41,7 +43,7 @@ function HomeView({ navigation }) {
         }
 
         return response.map(response => (
-                <Recipe key={response.id} title={response.title} image={response.image}/>
+                <Recipe key={response.id} id={response.id} title={response.title} image={response.image} navigation={navigation}/>
             
         ));
     }
