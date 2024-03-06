@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, ActivityIndicator, ScrollView, FlatList, SafeAreaView, StyleSheet} from 'react-native';
+import {View, Text, Pressable, ActivityIndicator, ScrollView, FlatList, SafeAreaView, StyleSheet} from 'react-native';
 import Ingredient from '../components/Ingredient';
+import AddToCartButton from '../components/AddToCartButton';
 
 //Route is an object that contains the props passed when using react navigate.
 const RecipeView = ({navigation, route}) => {
@@ -42,13 +43,21 @@ const RecipeView = ({navigation, route}) => {
 
     const getIngredients = () => {
         return (
-                <FlatList
-                    data={response.ingredients}
-                    renderItem={({item}) => <Ingredient name={item.name} price={item.price} image={"https://spoonacular.com/cdn/ingredients_100x100/"+item.image}/>}
-                    keyExtractor={item=>item.id}
-                    style={styles.flatList}
-                />
-
+            <View style={{flex:1}}>
+                <View style={styles.flatList}>
+                    <FlatList
+                        data={response.ingredients}
+                        renderItem={({item}) => <Ingredient name={item.name} price={item.price} image={"https://spoonacular.com/cdn/ingredients_100x100/"+item.image}/>}
+                        keyExtractor={item=>item.id}
+                    />
+                </View>
+                <View style={styles.total}>
+                    <Text style={alignItems='left'}>Total Price: </Text>
+                    <AddToCartButton style={styles.addToCartButton}>
+                        <Text style={{color: "white", fontWeight: "bold", textAlign: "center"}}>Add To Cart</Text>
+                    </AddToCartButton>
+                </View>
+            </View>
         );
     }
 
@@ -83,6 +92,16 @@ const styles = StyleSheet.create({
     addToCart: {
         flex: 1,
     },
+    total: {
+        flex: 1,
+        alignItems: 'center',
+    },
+    addToCartButton: {
+        borderWidth: 1, 
+        borderRadius: 30,
+        padding: 10,
+        backgroundColor: 'green',
+    }
 });
 
 export default RecipeView;
