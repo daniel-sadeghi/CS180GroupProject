@@ -25,6 +25,8 @@ const styles = StyleSheet.create({
     image: {
         minWidth: 350,
         minHeight: 250,
+        borderRadius: 20,
+        borderWidth:1,
     },
     banner: {
         backgroundColor: 'rgba(0, 0, 0, 0.6)', // Semi-transparent black background for the bannerText
@@ -33,6 +35,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         padding: 10, 
+        borderRadius: 20,
     },
     bannerText: {
         color: 'white',

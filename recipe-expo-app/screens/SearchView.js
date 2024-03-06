@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
-import Recipe from '../components/RecipeComponent'
-import {useNavigation} from '@react-navigation/native'
+import { View, Text, TextInput, StyleSheet, ScrollView, ActivityIndicator,Image } from 'react-native';
+import Recipe from '../components/RecipeComponent';
+import {useNavigation} from '@react-navigation/native';
 
 function SearchView({ navigation }) {
   const [search, setSearch] = useState([]);
@@ -32,24 +32,35 @@ const getSearchResults = () => {
   }
 
   return search.map(search => (
-          <Recipe key={search.id} title={search.title} image={search.image}/>
-      
+    <View>
+      <Recipe key={search.id} title={search.title} image={search.image}/>
+    </View>
   ));
 }
-
-
   return (
         <ScrollView>
-            <TextInput
-              placeholder="Search Recipes"
-              style={{ borderWidth: 1 }}
-              onChangeText={text => {
+          <View style = {styles.assembler}>
+            <View style = {styles.container}>
+              <TextInput 
+                style ={styles.input}
+                placeholder='Search Recipes'
+                onChangeText={text => {
                 setSearch([]); // Clear the recipe info when input changes
                 fetchSearch(text); // Fetch search suggestions
               }}
-            />
-            {getSearchResults()}     
-                
+              >
+              </TextInput>
+            </View>
+              <View style= {styles.button}>
+                <Image 
+                  source={require('../assets/search.png')}
+                  style={styles.image}
+                />
+              </View>
+          </View>
+          <View style = {styles.containerRecipes}>
+              {getSearchResults()}
+          </View>
         </ScrollView>
   );
 }
@@ -57,11 +68,38 @@ const getSearchResults = () => {
 export default SearchView;
 
 const styles = StyleSheet.create({
+  assembler:{
+    flexDirection: 'row',
+    marginTop: 10,
+    justifyContent:'center',
+  },
   container: {
-    //flex: 1,
-    //justifyContent: 'center',
-    //alignItems: 'center',
-    backgroundColor: '#90EE90',
+    backgroundColor: '#ecf0f1',
+    width:250,
+    height:40,
+    borderWidth:1,
+    borderTopLeftRadius:40,
+    borderBottomLeftRadius:40,
+  },
+  containerRecipes: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  input: {
+    marginLeft:10,
+    marginTop:10,
+    fontSize: 16
+  },
+  button: {
+    height:40,
+    width:35,
+    backgroundColor: '#ecf0f1',
+    borderWidth:1,
+    borderBottomRightRadius:10,
+    borderTopRightRadius:10,
+    textAlign: 'center',
+    alignItems:'center',
+    justifyContent:'center',
   },
   text: {
     fontSize: 20,
@@ -73,10 +111,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginVertical: 10,
   },
-  button: {
-    color: 'blue',
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  image:{
+    flex: 0.85,
+    resizeMode: 'contain',
   },
 });
