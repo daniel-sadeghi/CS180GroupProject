@@ -25,7 +25,11 @@ function SearchView({ navigation }) {
 
 const getSearchResults = () => {
   if (isLoading) {
-      return <ActivityIndicator size='large' />;
+      return (
+        <View style={styles.loading}>
+            <ActivityIndicator size='large' />
+        </View>
+      );
   }
   if (error) {
       return <Text>Oops! {error}</Text>;
@@ -67,6 +71,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
+  },
+  loading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   link: {
     color: 'blue',

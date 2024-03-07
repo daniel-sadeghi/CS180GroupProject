@@ -34,14 +34,15 @@ function HomeView({ navigation }) {
         fetchRecipe();
     }, []);
 
-    const getHomeRecipes = () => {
-        if (isLoading) {
-            return <ActivityIndicator size='large' />;
-        }
-        if (error) {
-            return <Text>Oops! {error}</Text>;
-        }
+    const isLoadingView = () => {
+        return (
+            <View style={styles.loading}>
+                <ActivityIndicator size='large' />
+            </View>
+        );
+    }
 
+    const getHomeRecipes = () => {
         return response.map(response => (
                 <Recipe key={response.id} id={response.id} title={response.title} image={response.image} navigation={navigation}/>
             
@@ -51,7 +52,7 @@ function HomeView({ navigation }) {
     return(
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.contentContainer}>
-                {getHomeRecipes()}
+                {isLoading ? isLoadingView() : getHomeRecipes()}
             </ScrollView>
         </SafeAreaView>
     );
@@ -60,22 +61,27 @@ function HomeView({ navigation }) {
 export default HomeView;
 
 const styles = StyleSheet.create({
-  container: {
+    container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#ecf0f1',
-  },
+    },
+    loading: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     contentContainer: {
     },
-  text: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  link: {
-    color: 'blue',
-    fontSize: 16,
-    marginVertical: 10,
-  },
+    text: {
+        fontSize: 20,
+        textAlign: 'center',
+        margin: 10,
+    },
+    link: {
+        color: 'blue',
+        fontSize: 16,
+        marginVertical: 10,
+    },
 });

@@ -55,7 +55,7 @@ const RecipeView = ({navigation, route}) => {
                 </View>
                 <View style={styles.total}>
                     <Text style={alignItems='left'}>Total Price: {USDFormat(total)} </Text>
-                    <AddToCartButton style={styles.addToCartButton}>
+                    <AddToCartButton style={styles.addToCartButton} ingredients={response.ingredients}>
                         <Text style={{color: "white", fontWeight: "bold", textAlign: "center"}}>Add To Cart</Text>
                     </AddToCartButton>
                 </View>
