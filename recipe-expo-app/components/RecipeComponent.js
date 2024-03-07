@@ -1,15 +1,19 @@
 import React from 'react';
-import {View, StyleSheet, Image, Text, ActivityIndicator} from 'react-native';
+import {View, StyleSheet, Image, Text, ActivityIndicator, Pressable} from 'react-native';
 
-const Recipe = (props) => {
-    const {title, image} = props;
-
+const Recipe = ({title, image, id, navigation}) => {
     return (
         <View style={styles.container} overflow='hidden'>
-            <Image source={{uri: image}} style={styles.image} resizeMode="stretch" />
-            <View style={styles.banner}>
-                <Text style={styles.bannerText}>{title}</Text>
-            </View>
+            <Pressable
+                onPress={() => {
+                    navigation.navigate('RecipeView', {title: title, id: id})
+                }}
+            >
+                <Image source={{uri: image}} style={styles.image} resizeMode="stretch" />
+                <View style={styles.banner}>
+                    <Text style={styles.bannerText}>{title}</Text>
+                </View>
+            </Pressable>
         </View>
     );
 };
