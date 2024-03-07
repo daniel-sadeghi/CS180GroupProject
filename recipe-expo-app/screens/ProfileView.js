@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, TouchableHighlight, Button, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, Button, TouchableOpacity, Modal, TouchableHighlight, ImageBackground, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 // npx expo install expo-image-picker -- --force
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import LogoutButton from '../contexts/LogoutButton';
-import * as FileSystem from 'expo-file-system';
 
 function ProfileView({ navigation }) {
   const [image, setImage] = useState(undefined);
+  const [modalVisible, setModalVisible] = useState(false);
   const [selectedItems, setSelectedItems] = useState({});
-  const [user, setUserData] = useState([]);
+  const [userData, setUserData] = useState([]);
   const { token } = useAuth();
   const { isLoggedIn, login } = useAuth();
   let [isLoading, setIsLoading] = useState(false);
@@ -59,67 +59,28 @@ function ProfileView({ navigation }) {
       aspect: [4, 3],
       quality: 1,
     });
-  
-    if (!result.cancelled && result.assets && result.assets.length > 0) {
-      const imageUri = result.assets[0].uri;
-  
-      // Get the base64 representation of the image
-      let base64Img = await FileSystem.readAsStringAsync(imageUri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-  
-      // Create a file name
-      let fileName = 'croppedImage.jpg';
-  
-      // Define the path where you want to save the image
-      let imagePath = FileSystem.documentDirectory + fileName;
-  
-      // Write the base64 data to the file
-      await FileSystem.writeAsStringAsync(imagePath, base64Img, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-  
-      // Create FormData object to send the file as form data
-      let formData = new FormData();
-      formData.append('file', {
-        uri: imagePath,
-        name: fileName,
-        type: 'image/jpeg', // Adjust the type according to your file type
-      });
 
-      // Send the POST request
-      fetch('https://jwt-postgre-tes.onrender.com/upload/', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': token, // Replace with your actual token
-        },
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Upload successful:', data);
-        setImage(data.name+'?v='+ new Date().getTime());
-        })
-        .catch(error => {
-          console.error('Error uploading image:', error);
-          // Handle any errors
-        });
+    if (!result.canceled) {
+       setImage(result.assets[0].uri);
+    }
+
+    const saveImage = async () => {
+      try {
+        await AsyncStorage.setItem('profileImage', result.assets[0].uri);
+      } catch (error) {
+        console.log('Error saving image:', error);
+      }
     }
   };
 
   return (
     <View style={styles.container}>
       {/* Display user profile information here */}
-
       {image ? (
-        <>
           <Image
-            source={{ uri: image }} 
+            source={{ uri: image }}
             style={[styles.profilePicture,]}
           />
-
-        </>
         ) : (
           <Image
             source={require('../assets/default-profilepic.jpg')}
@@ -127,85 +88,74 @@ function ProfileView({ navigation }) {
           />
         )
       }
-      
-      <TouchableOpacity 
-        onPress={pickImage} 
-        style={[styles.cameraButton]}
-      >
+      <TouchableOpacity onPress={pickImage} style={styles.cameraButton}>
         <Ionicons 
           name="camera" 
           size={24} 
           color="green" />
       </TouchableOpacity>
-
-      <Text 
-        style={styles.name}
+      {isLoading ? (
+        <ActivityIndicator size="large" />
+        ) : isLoggedIn ? (
+        <>
+          <Text style={styles.name}>{userData[0]?.user_name}</Text>
+          <Text style={styles.email}>{userData[0]?.user_email}</Text> 
+          <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
       >
-          {user?.user_name}
-      </Text>
-      
-      {/* Have the users name above*/}
-      <Text 
-        style={styles.email}
-      >
-        {user?.user_email}
-      </Text> 
-      {/* Have the users email above*/}
- {token && <>
-        <View style={styles.modalView}>
-          <Text style={styles.textStyle1}>Dietary Restrictions</Text>
-          <TouchableOpacity style={selectedItems['gluten_free'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('gluten_free')}>
-            <Image source={require('../assets/glutenfree.png')} style={styles.icon}/>
-            <Text style={styles.menuItemText}>Gluten Free</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={selectedItems['ketogenic'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('ketogenic')}>
-            <Image source={require('../assets/ketogenic.png')} style={styles.icon}/>
-            <Text style={styles.menuItemText}>Ketogenic</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={selectedItems['vegetarian'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('vegetarian')}>
-            <Image source={require('../assets/vegetarian.png')} style={styles.icon}/>
-            <Text style={styles.menuItemText}>Vegetarian</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={selectedItems['vegan'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('vegan')}>
-            <Image source={require('../assets/vegan.png')} style={styles.icon}/>
-            <Text style={styles.menuItemText}>Vegan</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={selectedItems['pescetarian'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('pescetarian')}>
-            <Image source={require('../assets/pescetarian.png')} style={styles.icon}/>
-            <Text style={styles.menuItemText}>Pescetarian</Text>
-          </TouchableOpacity>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TouchableOpacity style={selectedItems['item1'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item1')}>
+              <Image source={require('../assets/vegan.png')} style={styles.icon}/>
+              <Text style={styles.menuItemText}>Vegan</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={selectedItems['item2'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item2')}>
+              <Image source={require('../assets/nogluten.png')} style={styles.icon}/>
+              <Text style={styles.menuItemText}>Gluten Free</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={selectedItems['item3'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item3')}>
+              <Image source={require('../assets/nonlactose.png')} style={styles.icon}/>
+              <Text style={styles.menuItemText}>Lactose</Text>
+            </TouchableOpacity>
 
-          <TouchableHighlight
+            <TouchableHighlight
               style={{ ...styles.openButton, backgroundColor: "green" }}
               onPress={() => {
-                handleSubmitRestriction();
+                setModalVisible(!modalVisible);
               }}
             >
-              <Text style={styles.textStyle2}>Save</Text>
+              <Text style={styles.textStyle}>Hide Menu</Text>
             </TouchableHighlight>
-            <LogoutButton style={{ ...styles.openButton, backgroundColor: "green" }}/>
+          </View>
         </View>
-        </>}
-        {
-  !token &&
-    <>
-    <TouchableHighlight
-              style={{ ...styles.openButton, backgroundColor: "green" }}
-              onPress={() => navigation.navigate('Login')}
-            >
-              <Text style={styles.textStyle2}>Log In</Text>
-    </TouchableHighlight>
-    
-    <TouchableHighlight
-      style={{ ...styles.openButton, backgroundColor: "green" }}
-      onPress={() => navigation.navigate('SignUp')}
-    >
-      <Text style={styles.textStyle2}>Sign Up</Text>
-    </TouchableHighlight>
-    </>
+      </Modal>
 
-}
-
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          setModalVisible(true);
+        }}
+      >
+        <Text style={styles.textStyle}>Dietary Restrictions</Text>
+      </TouchableOpacity>
+      <LogoutButton/>
+        </>
+      ) : (
+        <><Text style={styles.guest}>Welcome, Guest! Please log in to view your profile.</Text><>
+            <Button
+              title="Sign Up here!"
+              onPress={() => navigation.navigate('SignUp')} />
+            <Button
+              title="Login here!"
+              onPress={() => navigation.navigate('Login')} />
+              
+          </></>
+      )}
     </View>
   );
 }
@@ -214,14 +164,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    position: 'absolute' ,top: 50, left: 0, right: 0, bottom: 30,
+    position: 'absolute' ,top: -200, left: 0, right: 0, bottom: 200,
     alignItems: 'center',
   },
-  modalView: {
+  centeredView: {
     flex: 1,
+    justifyContent: "center",
+    position: 'absolute' ,top: 150, left: 0, right: 0, bottom: 0,
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
     backgroundColor: "white",
     borderRadius: 30,
-    padding: 40,
+    padding: 35,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -232,33 +189,24 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: '80%',
-    height: '50%',
+    height: '40%',
   },
   openButton: {
     backgroundColor: "#F194FF",
     borderRadius: 30,
     padding: 10,
     elevation: 2,
-    marginTop: 10,
+    marginTop: 20,
   },
   button: {
     backgroundColor: 'green',
     padding: 10,
     borderRadius: 30,
   },
-  textStyle1: {
-    color: "#13A306",
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 15,
-  },
-  textStyle2: {
+  textStyle: {
     color: "white",
-    fontSize: 12,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 0,
     fontFamily: "Palatino",
   },
   profilePicture: {
@@ -266,7 +214,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     marginBottom: -17.5,
-    marginTop: 10,
+    marginTop: 50,
   },
   name: {
     fontSize: 20,
@@ -324,11 +272,6 @@ const styles = StyleSheet.create({
   icon: {
     width: 20,
     height: 20,
-  },
-  logout: {
-    backgroundColor: 'green',
-    padding: 10,
-    borderRadius: 30,
   },
 });
 
