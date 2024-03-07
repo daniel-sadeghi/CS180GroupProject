@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, Button, TouchableOpacity, Switch } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 // npx expo install expo-image-picker -- --force
 import { Ionicons } from '@expo/vector-icons';
@@ -7,13 +7,67 @@ import * as FileSystem from 'expo-file-system';
 
 function ProfileView({ navigation }) {
   const [image, setImage] = useState(undefined);
-
   const [selectedItems, setSelectedItems] = useState({});
-  const [isSwitchOn1, setSwitchOn1] = useState(false);
+  const [user, setUser] = useState(undefined);
+  
+  useEffect(() => {
+    const fetchUser = async () =>{
+        fetch('https://jwt-postgre-tes.onrender.com/profile', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGIwODk4ZTEtNzYzMS00OWY3LTliN2QtNTk4NzJiOTZiOWVjIn0sImlhdCI6MTcwOTc4MTkwOSwiZXhwIjoxNzA5Nzg1NTA5fQ.K-8_RHJiJeyDBQWkOh0v0yWxmsWmc7l0RKFASmTR2eE`,
+          },
+        })
+        .then(res => res.json())
+        .then(data => {
+          setUser(data[0])
+          setImage(data[0].image)
+          const selected = data[0]?.restrictions?.split(',')
+          
+          
+          const selectedObj = {};
+          for (const item of selected) {
+            selectedObj[item] = true;
+          }
+          setSelectedItems(selectedObj);
+        })
+        .catch(err => console.log(err));
+      }
 
-  const handlePress = (item) => {
+      fetchUser()
+
+    }
+  
+    , []
+  )
+
+  const handleSubmitRestriction = async () => {
+    const selected = Object.keys(selectedItems).filter((item) => selectedItems[item]);
+    const concatenatedString = selected.join(',');
+    console.log(concatenatedString)
+    
+    
+    fetch('https://jwt-postgre-tes.onrender.com/profile/restrictions', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZjZkNDBkNDQtODUzMy00YTAxLWIxZmYtOWFiYzIwMDNjNjQ4In0sImlhdCI6MTcwOTc4OTc2OCwiZXhwIjoxNzA5NzkzMzY4fQ.QdN2GE2daZc4cpQdiQ5NtWfeHFHFEnPTqotZpBFhmYA`,
+      },
+      body: JSON.stringify({ restriction: concatenatedString }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+      })
+      .catch(err => console.log(err));
+  }
+
+  const handlePress = async (item) => {
     setSelectedItems(prevState => ({ ...prevState, [item]: !prevState[item] }));
+    await handleSubmitRestriction();
   };
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -48,14 +102,14 @@ function ProfileView({ navigation }) {
         name: fileName,
         type: 'image/jpeg', // Adjust the type according to your file type
       });
-  
+
       // Send the POST request
       fetch('https://jwt-postgre-tes.onrender.com/upload/', {
         method: 'POST',
         body: formData,
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGIwODk4ZTEtNzYzMS00OWY3LTliN2QtNTk4NzJiOTZiOWVjIn0sImlhdCI6MTcwOTc3ODI5OSwiZXhwIjoxNzA5NzgxODk5fQ.KisZhe0al09xbLW1Isss0qc4emAl4V2VWMId-Zk4mB8', // Replace with your actual token
+          'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZjZkNDBkNDQtODUzMy00YTAxLWIxZmYtOWFiYzIwMDNjNjQ4In0sImlhdCI6MTcwOTc4OTc2OCwiZXhwIjoxNzA5NzkzMzY4fQ.QdN2GE2daZc4cpQdiQ5NtWfeHFHFEnPTqotZpBFhmYA', // Replace with your actual token
         },
       })
         .then(response => response.json())
@@ -71,43 +125,9 @@ function ProfileView({ navigation }) {
     }
   };
 
-  // const pickImage = async () => {
-  //   let result = await ImagePicker.launchImageLibraryAsync({
-  //     mediaTypes: ImagePicker.MediaTypeOptions.All,
-  //     allowsEditing: true,
-  //     aspect: [4, 3],
-  //     quality: 1,
-  //   });
-
-  //   if (!result.canceled) {
-  //      setImage(result.assets[0].uri);
-  //   }
-
-  //   // const saveImage = async () => {
-  //   //   try {
-  //   //     await AsyncStorage.setItem('profileImage', result.assets[0].uri);
-  //   //   } catch (error) {
-  //   //     console.log('Error saving image:', error);
-  //   //   }
-  //   // }
-  // };
-
   return (
     <View style={styles.container}>
       {/* Display user profile information here */}
-
-      {/* {image ? (
-          <Image
-            source={{ uri: image }}
-            style={[styles.profilePicture,]}
-          />
-        ) : (
-          <Image
-            source={require('../assets/default-profilepic.jpg')}
-            style={[styles.profilePicture,]}
-          />
-        )
-      } */}
 
       {image ? (
         <>
@@ -136,8 +156,11 @@ function ProfileView({ navigation }) {
       </TouchableOpacity>
 
       <Text 
-        style={styles.name}>{"John Doe"}
-        </Text>
+        style={styles.name}
+        >
+          {"John Doe"}
+      </Text>
+      
       {/* Have the users name above*/}
       <Text 
         style={styles.email}>{"JohnDoe@email.com"}
@@ -146,23 +169,23 @@ function ProfileView({ navigation }) {
 
         <View style={styles.modalView}>
           <Text style={styles.textStyle}>Dietary Restrictions</Text>
-          <TouchableOpacity style={selectedItems['item1'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item1')}>
+          <TouchableOpacity style={selectedItems['gluten_free'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('gluten_free')}>
             <Image source={require('../assets/glutenfree.png')} style={styles.icon}/>
             <Text style={styles.menuItemText}>Gluten Free</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={selectedItems['item2'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item2')}>
+          <TouchableOpacity style={selectedItems['ketogenic'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('ketogenic')}>
             <Image source={require('../assets/ketogenic.png')} style={styles.icon}/>
             <Text style={styles.menuItemText}>Ketogenic</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={selectedItems['item3'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item3')}>
+          <TouchableOpacity style={selectedItems['vegetarian'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('vegetarian')}>
             <Image source={require('../assets/vegetarian.png')} style={styles.icon}/>
             <Text style={styles.menuItemText}>Vegetarian</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={selectedItems['item4'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item4')}>
+          <TouchableOpacity style={selectedItems['vegan'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('vegan')}>
             <Image source={require('../assets/vegan.png')} style={styles.icon}/>
             <Text style={styles.menuItemText}>Vegan</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={selectedItems['item5'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('item5')}>
+          <TouchableOpacity style={selectedItems['pescetarian'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('pescetarian')}>
             <Image source={require('../assets/pescetarian.png')} style={styles.icon}/>
             <Text style={styles.menuItemText}>Pescetarian</Text>
           </TouchableOpacity>
