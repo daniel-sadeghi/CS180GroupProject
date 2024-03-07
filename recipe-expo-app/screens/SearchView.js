@@ -104,7 +104,8 @@ const styles = StyleSheet.create({
   input: {
     marginLeft:10,
     marginTop:10,
-    fontSize: 16
+    fontSize: 16,
+    fontFamily: "Palatino",
   },
   button: {
     height:40,
