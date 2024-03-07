@@ -2,6 +2,9 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, Pressable, ActivityIndicator, ScrollView, FlatList, SafeAreaView, StyleSheet} from 'react-native';
 import Ingredient from '../components/Ingredient';
 import AddToCartButton from '../components/AddToCartButton';
+import FavoriteButton from '../components/FavoriteButton';
+import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
 import USDFormat from '../utils/USDFormat';
 
 //Route is an object that contains the props passed when using react navigate.
@@ -14,6 +17,12 @@ const RecipeView = ({navigation, route}) => {
     const [total, setTotal] = useState(0);
     let title = route.params.title;
     let id = route.params.id;
+    let image = route.params.image;
+    let sourceURL = route.params.sourceURL;
+    let spoonacularSourceURL = route.params.spoonacularSourceURL;
+    const { isLoggedIn, login } = useAuth();
+    const { token } = useAuth();
+    const [favortieStartState, setFavoriteStartState] = useState(false);
 
     useEffect(()=>{
         const URI = `https://api.spoonacular.com/recipes/${id}/priceBreakdownWidget.json`;
@@ -35,7 +44,34 @@ const RecipeView = ({navigation, route}) => {
             setIsLoading(false);
         };
 
-        fetchDetails();
+        const favortieStartCheck = async () => {
+            if(token != null){
+                
+              try {
+                const res = await axios.get('https://jwt-postgre-tes.onrender.com/favorites', {
+                  headers: {
+                    Authorization: `${token}`,
+                  },
+                });
+    
+                if (res.data && res.data.length > 0) {
+                    const foodIds = res.data.map((item) => item.food_id);
+                    const idExists = foodIds.includes(id);
+                    setFavoriteStartState(idExists);
+                }else{
+                    setFavoriteStartState(false);
+                  }
+               } 
+                catch (error) {
+                console.error('Error fetching user favorites:', error);
+              }
+              }
+              else{
+                console.log("Not Logged in");
+              }
+        };
+
+        fetchDetails().then(favortieStartCheck());
         
         navigation.setOptions({
             title: title === '' ? 'No title' : title,
@@ -58,6 +94,9 @@ const RecipeView = ({navigation, route}) => {
                     <AddToCartButton style={styles.addToCartButton}>
                         <Text style={{color: "white", fontWeight: "bold", textAlign: "center"}}>Add To Cart</Text>
                     </AddToCartButton>
+                    {isLoggedIn ? <FavoriteButton 
+                    heartStartState={favortieStartState} id={id} title={title} imageURL={image} sourceURL={sourceURL} spoonacularSourceURL={spoonacularSourceURL} 
+                    /> : null}
                 </View>
             </View>
         );
@@ -70,7 +109,6 @@ const RecipeView = ({navigation, route}) => {
             </View>
         );
     }
-
     return (
         <SafeAreaView style={styles.safeArea}>
             {isLoading ? loadingIndicator() : getIngredients()}
