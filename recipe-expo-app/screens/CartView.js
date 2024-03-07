@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, FlatList, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 function CartView({ navigation }) {
     [cart, setCart] = useState([]); // [cart, setCart] = useState([{}]);
@@ -16,22 +17,31 @@ function CartView({ navigation }) {
         };
         clearCart();
     }, []);
-    useEffect(() => {
-        const updateCart = async () => {        
-            try {
-                setIsLoading(true);
-                const storedCart = await AsyncStorage.getItem('cart');
-                if (storedCart !== null && JSON.stringify(storedCart) !== JSON.stringify(cart)) {
-                    setCart(JSON.parse(storedCart));
+    useFocusEffect(
+        React.useCallback(() => {
+            const updateCart = async () => {        
+                try {
+                    setIsLoading(true);
+                    const storedCart = await AsyncStorage.getItem('cart');
+                    console.log("storedCart", storedCart);
+    
+                    // Parse the storedCart only if it exists
+                    const parsedCart = storedCart ? JSON.parse(storedCart) : null;
+    
+                    // Compare parsedCart with cart to avoid infinite loop
+                    if (parsedCart && JSON.stringify(parsedCart) !== JSON.stringify(cart)) {
+                        setCart(parsedCart);
+                    }
+                } catch (error) {
+                    console.log(error);
+                } finally {
+                    setIsLoading(false);
                 }
-            } catch (error) {
-                console.log(error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        updateCart();
-    }, [cart]);
+            };
+    
+            updateCart();
+        }, [cart])
+    );
 
     const displayCart = () => {
         return (
@@ -39,7 +49,7 @@ function CartView({ navigation }) {
                 <View style={styles.flatList}>
                     <FlatList
                         data={cart}
-                        renderItem={({item}) => <Ingredient name={item.name} price={item.price} image={"https://spoonacular.com/cdn/ingredients_100x100/"+item.image}/>}
+                        renderItem={({item}) => <Ingredient name={item.name} price={item.price} image={'https://spoonacular.com/cdn/ingredients_100x100/' +item.image}/>}
                         keyExtractor={(item, index) => item.name + index}
                     />
                 </View>
