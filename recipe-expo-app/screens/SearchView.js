@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
+import { View, Text, TextInput, StyleSheet, Pressable, ScrollView, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
 import fetchSpoonGateway from '../api/SpoonacularGateway';
 import Recipe from '../components/RecipeComponent';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
-import { View, Text, TextInput, StyleSheet, Button, ScrollView, ActivityIndicator } from 'react-native';
 
 function SearchView({ navigation }) {
     const [search, setSearch] = useState('');
@@ -61,43 +61,88 @@ function SearchView({ navigation }) {
         ));
     };
 
-    return (
+  return (
         <ScrollView>
-            <TextInput
-                placeholder="Search Recipes"
-                style={{ borderWidth: 1 }}
+          <View style = {styles.assembler}>
+            <View style = {styles.container}>
+              <TextInput 
+                style ={styles.input}
+                placeholder='Search Recipes'
                 onChangeText={(text) => {
-                    setSearch(text); // Update search state when input changes
+                  setSearch(text); // Update search state when input changes
                 }}
-            />
-            <Button title="Submit" onPress={handleSearchSubmit} color="#3498db" />
+              >
+              </TextInput>
+            </View>
+              <View style= {styles.button}>
+                <Pressable 
+                  onPress={handleSearchSubmit}
+                  style = {({pressed}) => { return{ opacity: pressed ? 0.5 : 1}}}>
+                <Image 
+                  source={require('../assets/search.png')}
+                  style={styles.image}
+                />
+                </Pressable>
+              </View>
+          </View>
+          <View style = {styles.containerRecipes}>
             {renderRecipes()}   
+          </View>
         </ScrollView>
     );
 }
 export default SearchView;
 
 const styles = StyleSheet.create({
+  assembler:{
+    flexDirection: 'row',
+    marginTop: 10,
+    justifyContent:'center',
+  },
   container: {
-    //flex: 1,
-    //justifyContent: 'center',
-    //alignItems: 'center',
-    backgroundColor: '#90EE90',
+    backgroundColor: '#ecf0f1',
+    width:250,
+    height:40,
+    borderWidth:1,
+    borderTopLeftRadius:40,
+    borderBottomLeftRadius:40,
+  },
+  containerRecipes: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  input: {
+    marginLeft:10,
+    marginTop:10,
+    fontSize: 16,
+    fontFamily: "Palatino",
+  },
+  button: {
+    height:40,
+    width:35,
+    backgroundColor: '#ecf0f1',
+    borderWidth:1,
+    borderBottomRightRadius:10,
+    borderTopRightRadius:10,
+    textAlign: 'center',
+    alignItems:'center',
+    justifyContent:'center',
   },
   text: {
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
+    fontFamily: "Palatino",
   },
   link: {
     color: 'blue',
     fontSize: 16,
     marginVertical: 10,
+    fontFamily: "Palatino",
   },
-  button: {
-    color: 'blue',
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  image:{
+    marginTop:5,
+    flex: 0.85,
+    resizeMode: 'contain',
   },
 });

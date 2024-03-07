@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     marginBottom: 16,
+    fontFamily: "Palatino",
   },
   input: {
     height: 40,
@@ -89,6 +90,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 12,
     paddingLeft: 8,
+    fontFamily: "Palatino",
   },
   error: {
     color: 'red',
