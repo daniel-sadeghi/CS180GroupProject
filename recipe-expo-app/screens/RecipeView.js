@@ -6,7 +6,7 @@ import FavoriteButton from '../components/FavoriteButton';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import USDFormat from '../utils/USDFormat';
-import fetchSpoonData from '../api/SpoonacularGateway';
+import fetchSpoonGateway from '../api/SpoonacularGateway';
 //Route is an object that contains the props passed when using react navigate.
 const RecipeView = ({navigation, route}) => {
     //const [title, setTitle] = useState(route.params.title);
@@ -30,7 +30,7 @@ const RecipeView = ({navigation, route}) => {
         const fetchDetails = async () => {
             try {
                 console.log(`Fetching from ${URI}`);
-                const res = await fetchSpoonData(`recipes/${id}/priceBreakdownWidget.json`,['includeNutrition=false']);
+                const res = await fetchSpoonGateway(`recipes/${id}/priceBreakdownWidget.json`,['includeNutrition=false']);
                 setResponse(res);
                 setTotal(res.ingredients.reduce((a,b) => a+b.price,0));
             } catch (error) {

@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, Button, ActivityIndicator} from 'react-native';
 import Recipe from '../components/RecipeComponent';
 import { useAuth } from '../contexts/AuthContext';
-import fetchSpoonData from '../api/SpoonacularGateway';
+import fetchSpoonGateway from '../api/SpoonacularGateway';
 
 
 function HomeView({ navigation }) { 
@@ -16,7 +16,7 @@ function HomeView({ navigation }) {
         const fetchRecipe = async () => {
             try {
                 //const res = await fetch(url).then(response => response.json());
-                const res = await fetchSpoonData('recipes/random',['number=5']);
+                const res = await fetchSpoonGateway('recipes/random',['number=5']);
                 if (res && res.recipes) {
                     setResponse(res.recipes);
                 } else {
