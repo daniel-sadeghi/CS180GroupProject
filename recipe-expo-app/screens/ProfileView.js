@@ -8,7 +8,6 @@ import * as FileSystem from 'expo-file-system';
 function ProfileView({ navigation }) {
   const [image, setImage] = useState(undefined);
   const [selectedItems, setSelectedItems] = useState({});
-  const [showSaveButton, setShowSaveButton] = useState(false);
   const [user, setUser] = useState(undefined);
   
   useEffect(() => {
@@ -17,7 +16,7 @@ function ProfileView({ navigation }) {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGIwODk4ZTEtNzYzMS00OWY3LTliN2QtNTk4NzJiOTZiOWVjIn0sImlhdCI6MTcwOTc4MTkwOSwiZXhwIjoxNzA5Nzg1NTA5fQ.K-8_RHJiJeyDBQWkOh0v0yWxmsWmc7l0RKFASmTR2eE`,
+            Authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGIwODk4ZTEtNzYzMS00OWY3LTliN2QtNTk4NzJiOTZiOWVjIn0sImlhdCI6MTcwOTc5ODcyOSwiZXhwIjoxNzA5ODAyMzI5fQ.VeEKMSDho9BUXpO1JpYztO3MXdMoyhxuUoQGtICfJ50`,
           },
         })
         .then(res => res.json())
@@ -53,7 +52,7 @@ function ProfileView({ navigation }) {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZjZkNDBkNDQtODUzMy00YTAxLWIxZmYtOWFiYzIwMDNjNjQ4In0sImlhdCI6MTcwOTc4OTc2OCwiZXhwIjoxNzA5NzkzMzY4fQ.QdN2GE2daZc4cpQdiQ5NtWfeHFHFEnPTqotZpBFhmYA`,
+        Authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGIwODk4ZTEtNzYzMS00OWY3LTliN2QtNTk4NzJiOTZiOWVjIn0sImlhdCI6MTcwOTc5ODcyOSwiZXhwIjoxNzA5ODAyMzI5fQ.VeEKMSDho9BUXpO1JpYztO3MXdMoyhxuUoQGtICfJ50`,
       },
       body: JSON.stringify({ restriction: concatenatedString }),
     })
@@ -122,14 +121,13 @@ function ProfileView({ navigation }) {
         body: formData,
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGIwODk4ZTEtNzYzMS00OWY3LTliN2QtNTk4NzJiOTZiOWVjIn0sImlhdCI6MTcwOTc5Nzc2NywiZXhwIjoxNzA5ODAxMzY3fQ.djktyN_lBBSmK766M5m8WDFSP4gCLwAjzf8sHwcXi6g', // Replace with your actual token
+          'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGIwODk4ZTEtNzYzMS00OWY3LTliN2QtNTk4NzJiOTZiOWVjIn0sImlhdCI6MTcwOTc5ODcyOSwiZXhwIjoxNzA5ODAyMzI5fQ.VeEKMSDho9BUXpO1JpYztO3MXdMoyhxuUoQGtICfJ50', // Replace with your actual token
         },
       })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Upload successful:', data);
-          setImage(data.name);
-          // Handle the response data as needed
+      .then(response => response.json())
+      .then(data => {
+        console.log('Upload successful:', data);
+        setImage(data.name+'?v='+ new Date().getTime());
         })
         .catch(error => {
           console.error('Error uploading image:', error);
@@ -145,7 +143,7 @@ function ProfileView({ navigation }) {
       {image ? (
         <>
           <Image
-            source={{ uri: image+'?v='+ new Date().getTime()}}
+            source={{ uri: image }} 
             style={[styles.profilePicture,]}
           />
 
@@ -263,7 +261,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   textStyle2: {
-    color: "#13A306",
+    color: "white",
     fontSize: 12,
     fontWeight: "bold",
     textAlign: "center",
