@@ -1,52 +1,67 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
-import Recipe from '../components/RecipeComponent'
-import {useNavigation} from '@react-navigation/native'
 import fetchSpoonData from '../api/SpoonacularGateway';
+import Recipe from '../components/RecipeComponent';
+import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
+import { View, Text, TextInput, StyleSheet, Button, ScrollView, ActivityIndicator } from 'react-native';
 
 function SearchView({ navigation }) {
-  const [search, setSearch] = useState([]);
+  const [search, setSearch] = useState('');
+  const [results, setResults] = useState([]);
   let [error, setError] = useState();
-  let [isLoading, setIsLoading] = useState(true);
+  let [isLoading, setIsLoading] = useState(false);
 
   async function fetchSearch(query) {
+    setIsLoading(true); // Set isLoading to true while fetching
     try {
         const response = await fetchSpoonData('recipes/complexSearch',[`query=${query}`]);
-        console.log(response);
-        setSearch(response.results); // Update the suggestions state
+        const response = await fetchSpoonData('recipes/complexSearch',[`query=${query}`]);
+          setResults(response.results);
+          const allIds = results.map(recipe => recipe.id);
+          const promises = allIds.map((item) => {
+            return axios.get(`https://api.spoonacular.com/recipes/${item}/information?includeNutrition=false&apiKey=${API_KEY}`);
+          });
+          const responses = await Promise.all(promises);
+          const data = responses.map((response) => response.data);
+          setResults(data);
     } catch (error) {
         console.error('Error fetching search suggestions:', error);
     }
-    setIsLoading(false);
+    finally {
+      setIsLoading(false); // Set isLoading back to false
+    }
 }
 
-const getSearchResults = () => {
+const handleSearchSubmit = () => {
+  fetchSearch(search); // Call fetchSearch when the button is pressed
+};
+
+const renderRecipes = () => {
   if (isLoading) {
-      return <ActivityIndicator size='large' />;
+    return <ActivityIndicator size="large" />;
   }
   if (error) {
       return <Text>{error}</Text>;
   }
-
-  return search.map(search => (
-          <Recipe key={search.id} id={search.id} title={search.title} image={search.image} navigation={navigation}/>
-      
+  return results.map((recipe) => (
+    <Recipe key={recipe.id} id={recipe.id} title={recipe.title} image={recipe.image} navigation={navigation}
+      sourceURL={recipe.sourceUrl} spoonacularSourceURL={recipe.spoonacularSourceUrl}
+    />
   ));
-}
+};
 
 
   return (
         <ScrollView>
             <TextInput
-              placeholder="Search Recipes"
-              style={{ borderWidth: 1 }}
-              onChangeText={text => {
-                setSearch([]); // Clear the recipe info when input changes
-                fetchSearch(text); // Fetch search suggestions
-              }}
-            />
-            {getSearchResults()}     
-                
+        placeholder="Search Recipes"
+        style={{ borderWidth: 1 }}
+        onChangeText={(text) => {
+          setSearch(text); // Update search state when input changes
+        }}
+      />
+      <Button title="Submit" onPress={handleSearchSubmit} color="#3498db" />
+      {renderRecipes()}   
         </ScrollView>
   );
 }
