@@ -56,8 +56,8 @@ const FavoriteButton = ({heartStartState, id, title, imageURL, sourceURL, spoona
   }, [isHeartToggled]); 
 
   return (
-    <View>
-      <TouchableOpacity onPress={handleToggleHeart}>
+    <View testID="FavoriteButton:Container">
+      <TouchableOpacity onPress={handleToggleHeart} testID="FavoriteButton:Button:ClickMe">
         <MaterialCommunityIcons
           name={isHeartToggled ? 'heart' : 'heart-outline'}
           size={36}
