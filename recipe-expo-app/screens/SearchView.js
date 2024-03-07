@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, TextInput, StyleSheet, Pressable, ScrollView, ActivityIndicator, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Pressable, ScrollView, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
 import Recipe from '../components/RecipeComponent';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
@@ -66,7 +66,9 @@ const renderRecipes = () => {
               </TextInput>
             </View>
               <View style= {styles.button}>
-                <Pressable onPress={handleSearchSubmit}>
+                <Pressable 
+                  onPress={handleSearchSubmit}
+                  style = {({pressed}) => { return{ opacity: pressed ? 0.5 : 1}}}>
                 <Image 
                   source={require('../assets/search.png')}
                   style={styles.image}
@@ -131,6 +133,7 @@ const styles = StyleSheet.create({
     fontFamily: "Palatino",
   },
   image:{
+    marginTop:5,
     flex: 0.85,
     resizeMode: 'contain',
   },
