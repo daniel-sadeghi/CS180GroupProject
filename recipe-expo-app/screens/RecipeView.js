@@ -5,6 +5,7 @@ import AddToCartButton from '../components/AddToCartButton';
 import FavoriteButton from '../components/FavoriteButton';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import USDFormat from '../utils/USDFormat';
 
 //Route is an object that contains the props passed when using react navigate.
 const RecipeView = ({navigation, route}) => {
@@ -13,6 +14,7 @@ const RecipeView = ({navigation, route}) => {
     const [isLoading, setIsLoading] = useState(true);
     const [response, setResponse] = useState();
     const [error, setError] = useState();
+    const [total, setTotal] = useState(0);
     let title = route.params.title;
     let id = route.params.id;
     let image = route.params.image;
@@ -33,7 +35,7 @@ const RecipeView = ({navigation, route}) => {
                 console.log(`Fetching from ${URI}`);
                 const res = await fetch(url).then(response => response.json());
                 setResponse(res);
-
+                setTotal(res.ingredients.reduce((a,b) => a+b.price,0));
             } catch (error) {
                 console.log(`Error: No response from ${URI}`);
                 
@@ -88,7 +90,7 @@ const RecipeView = ({navigation, route}) => {
                     />
                 </View>
                 <View style={styles.total}>
-                    <Text style={alignItems='left'}>Total Price: </Text>
+                    <Text style={alignItems='left'}>Total Price: {USDFormat(total)} </Text>
                     <AddToCartButton style={styles.addToCartButton}>
                         <Text style={{color: "white", fontWeight: "bold", textAlign: "center"}}>Add To Cart</Text>
                     </AddToCartButton>
