@@ -1,12 +1,12 @@
 import React from 'react';
 import {View, StyleSheet, Image, Text, ActivityIndicator, Pressable} from 'react-native';
 
-const Recipe = ({title, image, id, navigation}) => {
+const Recipe = ({title, image, id, navigation, sourceURL, spoonacularSourceURL}) => {
     return (
         <View style={styles.container} overflow='hidden'>
             <Pressable
                 onPress={() => {
-                    navigation.navigate('RecipeView', {title: title, id: id})
+                    navigation.navigate('RecipeView', {title: title, id: id, sourceURL: sourceURL, spoonacularSourceURL: spoonacularSourceURL, image: image})
                 }}
             >
                 <Image source={{uri: image}} style={styles.image} resizeMode="stretch" />
