@@ -2,20 +2,16 @@ import React, {useState, useEffect} from 'react';
 import { View, Text, TextInput, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import Recipe from '../components/RecipeComponent'
 import {useNavigation} from '@react-navigation/native'
+import fetchSpoonData from '../api/SpoonacularGateway';
 
 function SearchView({ navigation }) {
   const [search, setSearch] = useState([]);
   let [error, setError] = useState();
-  const API_KEY = '0e05e31e1192449ab972630943bc0865'; 
   let [isLoading, setIsLoading] = useState(true);
 
   async function fetchSearch(query) {
     try {
-        const response = await fetch(
-            `https://api.spoonacular.com/recipes/complexSearch?query=${query}&apiKey=${API_KEY}`
-        ).then(response => response.json());
-        console.log("Here are the search responses");
-        console.log(response);
+        const response = await fetchSpoonData('complexSearch',[`query=${query}`]).then(response => response.json());
         setSearch(response.results); // Update the suggestions state
     } catch (error) {
         console.error('Error fetching search suggestions:', error);

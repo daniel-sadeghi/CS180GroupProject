@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, Button, ActivityIndicator} from 'react-native';
-import Recipe from '../components/RecipeComponent'
+import Recipe from '../components/RecipeComponent';
+import fetchSpoonData from '../api/SpoonacularGateway';
+
 
 function HomeView({ navigation }) { 
     const [isLoading, setIsLoading] = useState(true);
@@ -8,26 +10,18 @@ function HomeView({ navigation }) {
     const [response, setResponse] = useState();
 
     useEffect(() => {
-        const URI = 'https://api.spoonacular.com/recipes/random';
-        const API_KEY = "0e05e31e1192449ab972630943bc0865" //TODO Fetch the API Key from the backend server
-
-        const url = URI + '?number=5&' 
-            + `apiKey=${API_KEY}`;
-
         //Fetch the API response, then funnel the result through a pipeline. First, parse the JSON, then store it to state
-        //
-        //
         const fetchRecipe = async () => {
             try {
-                console.log(`Fetching ${URI}`);
-                const res = await fetch(url).then(response => response.json());
+                //const res = await fetch(url).then(response => response.json());
+                const res = await fetchSpoonData('random',['number=5']).then(res => res.json());
                 setResponse(res.recipes);
 
             } catch (error) {
-                console.log(`Error: No response from ${URI}`);
+                console.log(`Error: No response from API`);
                 
             }
-            console.log(`Success: Fetched response from ${URI}`);
+            console.log(`Success: Fetched response from API`);
             setIsLoading(false);
         };
 
