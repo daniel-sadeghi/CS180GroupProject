@@ -1,85 +1,55 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, TouchableHighlight, Button } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, TouchableHighlight, Button, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 // npx expo install expo-image-picker -- --force
 import { Ionicons } from '@expo/vector-icons';
-import * as FileSystem from 'expo-file-system';
+import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 import LogoutButton from '../contexts/LogoutButton';
+import * as FileSystem from 'expo-file-system';
 
 function ProfileView({ navigation }) {
   const [image, setImage] = useState(undefined);
   const [selectedItems, setSelectedItems] = useState({});
-  const [user, setUser] = useState(undefined);
-  const token = null;  // Replace with your actual token
-  
+  const [userData, setUserData] = useState([]);
+  const { token } = useAuth();
+  const { isLoggedIn, login } = useAuth();
+  let [isLoading, setIsLoading] = useState(false);
+
+  // Call the function when the component mounts or as needed
   useEffect(() => {
-    const fetchUser = async () =>{
-        fetch('https://jwt-postgre-tes.onrender.com/profile', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: token,
-          },
-        })
-        .then(res => res.json())
-        .then(data => {
-          setUser(data[0])
-          setImage(data[0].image)
-          const selected = data[0]?.restrictions?.split(',')
-          
-          
-          const selectedObj = {};
-          for (const item of selected) {
-            selectedObj[item] = true;
-          }
-          setSelectedItems(selectedObj);
-        })
-        .catch(err => console.log(err));
-      }
+  const fetchUserData = async () => {
 
-      fetchUser()
-
+    if(token != null){
+      setIsLoading(true); // Set isLoading to true while fetching
+    try {
+      const response = await axios.get('https://jwt-postgre-tes.onrender.com/profile', {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      setUserData(response.data);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
     }
-  
-    , []
-  )
+    finally {
+      setIsLoading(false); // Set isLoading back to false
+    }
+    }
+    else{
+      console.log("Using guest context");
+    }
+  };
+    if(token){
+      fetchUserData();
+    }
+    else{
+      setIsLoading(false); // Set isLoading back to false
+    }
+  }, [token]);
 
-  const handleSubmitRestriction = async () => {
-    const selected = Object.keys(selectedItems).filter((item) => selectedItems[item]);
-    const concatenatedString = selected.join(',');
-    console.log(concatenatedString)
-    
-    
-    fetch('https://jwt-postgre-tes.onrender.com/profile/restrictions', {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: token,
-      },
-      body: JSON.stringify({ restriction: concatenatedString }),
-    })
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
-      })
-      .catch(err => console.log(err));
-  }
-
-  const handlePress = async (item) => {
-    setSelectedItems(prevState => 
-      
-      { 
-        const updatedState = { ...prevState };
-    // Toggle the selected state of the item
-    updatedState[item] = !prevState[item];
-    // Log the updated state (this will reflect the changes made by setState)
-    console.log(updatedState);
-    return updatedState;
-      }
-      
-      );
-    
-    console.log(selectedItems)
+  const handlePress = (item) => {
+    setSelectedItems(prevState => ({ ...prevState, [item]: !prevState[item] }));
   };
 
   const pickImage = async () => {
@@ -300,11 +270,13 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     marginBottom: -17.5,
+    marginTop: 50,
   },
   name: {
     fontSize: 20,
     color: '#13A306',
     fontWeight: 'bold',
+    marginTop: 15,
   },
   editButton: {
     backgroundColor: 'green',
@@ -318,6 +290,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'gray',
     marginBottom: 20,
+  },
+  guest: {
+    fontSize: 16,
+    color: 'gray',
+    marginBottom: 20,
+    marginTop: 20,
+    textAlign: 'center',
   },
   selectedMenuItem: {
     flexDirection: 'row',

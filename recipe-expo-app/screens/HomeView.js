@@ -1,31 +1,61 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, Button, useState, TouchableOpacity} from 'react-native';
-import Recipe from '../components/RecipeComponent'
+import React, {useState, useEffect} from 'react';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, Button, ActivityIndicator} from 'react-native';
+import Recipe from '../components/RecipeComponent';
+import { useAuth } from '../contexts/AuthContext';
 
+function HomeView({ navigation }) { 
+    const { isLoggedIn, login } = useAuth();
+    let [isLoading, setIsLoading] = useState(true);
+    let [error, setError] = useState();
+    let [response, setResponse] = useState();
 
-function HomeView({ navigation }) {
+    useEffect(() => {
+        const URI = 'https://api.spoonacular.com/recipes/random';
+        const API_KEY = "0e05e31e1192449ab972630943bc0865" //TODO Fetch the API Key from the backend server
+
+        const url = URI + '?number=5&' 
+            + `apiKey=${API_KEY}`;
+
+        //Fetch the API response, then funnel the result through a pipeline. First, parse the JSON, then store it to state
+        //
+        //
+        const fetchRecipe = async () => {
+            try {
+                console.log(`Fetching ${URI}`);
+                const res = await fetch(url).then(response => response.json());
+                setResponse(res.recipes);
+
+            } catch (error) {
+                console.log(`Error: No response from ${URI}`);
+                
+            }
+            console.log(`Success: Fetched response from ${URI}`);
+            setIsLoading(false);
+        };
+
+        fetchRecipe();
+    }, []);
+
+    const getHomeRecipes = () => {
+        if (isLoading) {
+            return <ActivityIndicator size='large' />;
+        }
+        if (error) {
+            return <Text>Oops! {error}</Text>;
+        }
+
+        return response.map(response => (
+                <Recipe key={response.id} id={response.id} title={response.title} image={response.image} navigation={navigation}
+                    sourceURL={response.sourceUrl} spoonacularSourceURL={response.spoonacularSourceUrl}
+                />
+            
+        ));
+    }
+
     return(
         <SafeAreaView style={styles.container}>
-            <ScrollView>
-                <Text style= {styles.text}>Welcome to the recipe app </Text>
-                <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                    <Text style= {styles.button}>Register</Text>
-                 </TouchableOpacity>
-                 <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                    <Text style= {styles.button}>Log in</Text>
-                 </TouchableOpacity>
-                <Recipe
-                    imageSource={require('../assets/ratatouille.jpg')}
-                    bannerText="ratatouille"  
-                />
-                <Recipe
-                    imageSource={require('../assets/ratatouille.jpg')}
-                    bannerText="ratatouille"  
-                />
-                <Recipe
-                    imageSource={require('../assets/ratatouille.jpg')}
-                    bannerText="ratatouille"  
-                />
+            <ScrollView contentContainerStyle={styles.contentContainer}>
+                {getHomeRecipes()}
             </ScrollView>
         </SafeAreaView>
     );
@@ -35,11 +65,13 @@ export default HomeView;
 
 const styles = StyleSheet.create({
   container: {
-    //flex: 1,
-    //justifyContent: 'center',
-    //alignItems: 'center',
-    backgroundColor: '#90EE90',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ecf0f1',
   },
+    contentContainer: {
+    },
   text: {
     fontSize: 20,
     textAlign: 'center',
@@ -49,11 +81,5 @@ const styles = StyleSheet.create({
     color: 'blue',
     fontSize: 16,
     marginVertical: 10,
-  },
-  button: {
-    color: 'blue',
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
   },
 });
