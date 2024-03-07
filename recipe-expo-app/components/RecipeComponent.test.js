@@ -7,7 +7,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 jest.mock('@react-native-async-storage/async-storage', () => ({
     getItem: jest.fn(),
     setItem: jest.fn(),
-    // Other methods as needed
   }));
 
 const mockNavigation = {
@@ -34,11 +33,8 @@ test('Recipe card renders correctly with a mock recipe info', async () => {
       // Check that the Recipe title is rendered
       const RecipeTitle = getByText('Pasta with Garlic, Scallions, Cauliflower & Breadcrumbs');
       expect(RecipeTitle).toBeDefined();
-      
+
     });
   });
-
   unmount();
-
-  // Add more assertions as needed to test the styling
 });

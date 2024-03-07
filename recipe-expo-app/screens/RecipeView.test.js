@@ -31,7 +31,6 @@ test('RecipeViews ingredients list renders correctly with a mock route', async (
   const { getByText, unmount } = render(
   <AuthProvider><RecipeView route={route} navigation={mockNavigation}/></AuthProvider>);
 
-  // Check that the Recipe name is rendered
   await act(async () => {
     await waitFor(() => {
       // Check that the Recipe Ingredients are all rendered
@@ -46,8 +45,5 @@ test('RecipeViews ingredients list renders correctly with a mock route', async (
     title: 'Pasta with Garlic, Scallions, Cauliflower & Breadcrumbs',
     headerBackTitle: 'Back',
   });
-
   unmount();
-
-  // Add more assertions as needed to test the styling
 });
