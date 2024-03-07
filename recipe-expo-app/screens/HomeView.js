@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, Button, ActivityIndicator} from 'react-native';
 import Recipe from '../components/RecipeComponent';
 import { useAuth } from '../contexts/AuthContext';
+import fetchSpoonGateway from '../api/SpoonacularGateway';
+
 
 function HomeView({ navigation }) { 
     const { isLoggedIn, login } = useAuth();
@@ -10,26 +12,19 @@ function HomeView({ navigation }) {
     let [response, setResponse] = useState();
 
     useEffect(() => {
-        const URI = 'https://api.spoonacular.com/recipes/random';
-        const API_KEY = "0e05e31e1192449ab972630943bc0865" //TODO Fetch the API Key from the backend server
-
-        const url = URI + '?number=5&' 
-            + `apiKey=${API_KEY}`;
-
         //Fetch the API response, then funnel the result through a pipeline. First, parse the JSON, then store it to state
-        //
-        //
         const fetchRecipe = async () => {
             try {
-                console.log(`Fetching ${URI}`);
-                const res = await fetch(url).then(response => response.json());
-                setResponse(res.recipes);
-
+                //const res = await fetch(url).then(response => response.json());
+                const res = await fetchSpoonGateway('recipes/random',['number=5']);
+                if (res && res.recipes) {
+                    setResponse(res.recipes);
+                } else {
+                    console.log(`Error: No recipes in response from API`);
+                }
             } catch (error) {
-                console.log(`Error: No response from ${URI}`);
-                
+                console.log(`Error fetching data from API: ${error.message}`);
             }
-            console.log(`Success: Fetched response from ${URI}`);
             setIsLoading(false);
         };
 

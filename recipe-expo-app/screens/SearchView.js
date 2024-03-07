@@ -1,56 +1,65 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, TextInput, StyleSheet, Pressable, ScrollView, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
+import fetchSpoonGateway from '../api/SpoonacularGateway';
 import Recipe from '../components/RecipeComponent';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 
 function SearchView({ navigation }) {
-  const [search, setSearch] = useState('');
-  const [results, setResults] = useState([]);
-  let [error, setError] = useState();
-  const API_KEY = '0e05e31e1192449ab972630943bc0865'; 
-  let [isLoading, setIsLoading] = useState(false);
+    const [search, setSearch] = useState('');
+    const [results, setResults] = useState([]);
+    let [error, setError] = useState();
+    let [isLoading, setIsLoading] = useState(false);
 
-  async function fetchSearch(query) {
-    setIsLoading(true); // Set isLoading to true while fetching
-    try {
-        const response = await fetch(
-            `https://api.spoonacular.com/recipes/complexSearch?query=${query}&apiKey=${API_KEY}`
-        ).then(response => response.json());
-          setResults(response.results);
-          const allIds = results.map(recipe => recipe.id);
-          const promises = allIds.map((item) => {
-            return axios.get(`https://api.spoonacular.com/recipes/${item}/information?includeNutrition=false&apiKey=${API_KEY}`);
-          });
-          const responses = await Promise.all(promises);
-          const data = responses.map((response) => response.data);
-          setResults(data);
-        
-    } catch (error) {
-        console.error('Error fetching search suggestions:', error);
-    }
-    finally {
-      setIsLoading(false); // Set isLoading back to false
-    }
-}
+    const handleSearchSubmit = async () => {
+        if (!search) return;
+        setIsLoading(true);
+      
+        try {
+            const response = await fetchSpoonGateway('recipes/complexSearch',[`query=${search}`]);
+            const allIds = response.results.map(recipe => recipe.id);
+            const chunks = [];
+            for (let i = 0; i < allIds.length; i += 5) {
+              chunks.push(allIds.slice(i, i + 5));
+            }
 
-const handleSearchSubmit = () => {
-  fetchSearch(search); // Call fetchSearch when the button is pressed
-};
+            // Make requests for each chunk
+            const data = [];
+            for (const chunk of chunks) {
+              const chunkResponses = await Promise.all(
+                chunk.map((item) =>
+                  fetchSpoonGateway(`recipes/${item}/information`, ['includeNutrition=false'])
+                )
+              );
+              data.push(...chunkResponses);
+              await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second between requests
+            }
+            setResults(data);
+            setIsLoading(false);
+        } catch (error) {
+            console.error('Error fetching search suggestions:', error);
+        }
+    };
 
-const renderRecipes = () => {
-  if (isLoading) {
-    return <ActivityIndicator size="large" />;
-  }
-  if (error) {
-    return <Text>Oops! {error}</Text>;
-  }
-  return results.map((recipe) => (
-    <Recipe key={recipe.id} id={recipe.id} title={recipe.title} image={recipe.image} navigation={navigation}
-      sourceURL={recipe.sourceUrl} spoonacularSourceURL={recipe.spoonacularSourceUrl}
-    />
-  ));
-};
+    const renderRecipes = () => {
+        if (isLoading) {
+            return <ActivityIndicator size="large" />;
+        }
+        if (error) {
+            return <Text>{error}</Text>;
+        }
+        return results.map((recipe) => (
+            <Recipe 
+                key={recipe.id} 
+                id={recipe.id} 
+                title={recipe.title} 
+                image={recipe.image} 
+                navigation={navigation}
+                sourceURL={recipe.sourceUrl} 
+                spoonacularSourceURL={recipe.spoonacularSourceUrl}
+            />
+        ));
+    };
 
   return (
         <ScrollView>
@@ -80,9 +89,8 @@ const renderRecipes = () => {
             {renderRecipes()}   
           </View>
         </ScrollView>
-  );
+    );
 }
-
 export default SearchView;
 
 const styles = StyleSheet.create({
