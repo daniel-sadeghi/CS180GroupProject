@@ -1,35 +1,30 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Pressable, ActivityIndicator, ScrollView, FlatList, SafeAreaView, StyleSheet} from 'react-native';
+import {View, Text, Pressable, ActivityIndicator, ScrollView, FlatList, SafeAreaView, StyleSheet, Alert} from 'react-native';
 import Ingredient from '../components/Ingredient';
 import AddToCartButton from '../components/AddToCartButton';
 import FavoriteButton from '../components/FavoriteButton';
-import { useAuth } from '../contexts/AuthContext';
-import axios from 'axios';
 import USDFormat from '../utils/USDFormat';
 import fetchSpoonGateway from '../api/SpoonacularGateway';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import FavoriteStorage from '../api/FavoriteStorage';
+import { useAuth } from '../contexts/AuthContext';
+
+
 //Route is an object that contains the props passed when using react navigate.
 const RecipeView = ({navigation, route}) => {
-    //const [title, setTitle] = useState(route.params.title);
-    //const [id, setKey] = useState(route.params.id);
     const [isLoading, setIsLoading] = useState(true);
     const [response, setResponse] = useState();
     const [error, setError] = useState();
     const [total, setTotal] = useState(0);
     let title = route.params.title;
     let id = route.params.id;
-    let image = route.params.image;
     let sourceURL = route.params.sourceURL;
     let spoonacularSourceURL = route.params.spoonacularSourceURL;
-    const { isLoggedIn, login } = useAuth();
-    const { token } = useAuth();
-    const [favortieStartState, setFavoriteStartState] = useState(false);
+    const [isFavorite, setisFavorite] = useState(false);
 
     useEffect(()=>{
-        const URI = `https://api.spoonacular.com/recipes/${id}/priceBreakdownWidget.json`;
-
         const fetchDetails = async () => {
             try {
-                console.log(`Fetching from ${URI}`);
                 const res = await fetchSpoonGateway(`recipes/${id}/priceBreakdownWidget.json`,['includeNutrition=false']);
                 setResponse(res);
                 setTotal(res.ingredients.reduce((a,b) => a+b.price,0));
@@ -40,40 +35,42 @@ const RecipeView = ({navigation, route}) => {
             setIsLoading(false);
         };
 
-        const favortieStartCheck = async () => {
-            if(token != null){
-                
-              try {
-                const res = await axios.get('https://jwt-postgre-tes.onrender.com/favorites', {
-                  headers: {
-                    Authorization: `${token}`,
-                  },
-                });
-    
-                if (res.data && res.data.length > 0) {
-                    const foodIds = res.data.map((item) => item.food_id);
-                    const idExists = foodIds.includes(id);
-                    setFavoriteStartState(idExists);
-                }else{
-                    setFavoriteStartState(false);
-                  }
-               } 
-                catch (error) {
+        const favoriteStartCheck = async () => {
+            try {
+                const favoritesString = await AsyncStorage.getItem('favorites');
+                console.log('Favorites from AsyncStorage:', favoritesString);
+                if(favoritesString){
+                    const favorites = JSON.parse(favoritesString);
+                    setisFavorite(favorites.includes(id));
+                }
+            }
+            catch (error) {
                 console.error('Error fetching user favorites:', error);
-              }
-              }
-              else{
-                console.log("Not Logged in");
-              }
+            }
         };
 
-        fetchDetails().then(favortieStartCheck());
+        fetchDetails().then(favoriteStartCheck());
         
         navigation.setOptions({
             title: title === '' ? 'No title' : title,
             headerBackTitle: 'Back',
         });
     }, []);
+
+    const handlePress = async () => {
+        try {
+            if (isFavorite) {
+                await FavoriteStorage.removeFavorite(id, useAuth().token);
+            } else {
+                console.log("Im adding a favorite");
+                await FavoriteStorage.addFavorite(id, title, imageURL, sourceURL, spoonacularSourceURL, useAuth().token);
+            }
+            setisFavorite(!isFavorite);
+        } catch (error) {
+            // Display an alert if the operation failed
+            Alert.alert('Error', isFavorite ? 'Trouble accessing account' : 'You need to log in');
+        }
+    };
 
     const getIngredients = () => {
         return (
@@ -90,9 +87,7 @@ const RecipeView = ({navigation, route}) => {
                     <AddToCartButton style={styles.addToCartButton}>
                         <Text style={{color: "white", fontWeight: "bold", textAlign: "center"}}>Add To Cart</Text>
                     </AddToCartButton>
-                    {isLoggedIn ? <FavoriteButton 
-                    heartStartState={favortieStartState} id={id} title={title} imageURL={image} sourceURL={sourceURL} spoonacularSourceURL={spoonacularSourceURL} 
-                    /> : null}
+                    <FavoriteButton heartStartState={isFavorite} onPress={handlePress}/>
                 </View>
             </View>
         );
