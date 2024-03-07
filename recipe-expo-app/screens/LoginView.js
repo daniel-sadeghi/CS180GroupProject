@@ -1,16 +1,52 @@
-import React,{ useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 
 function LoginView({ navigation }) {
-  const [username, setUsername] = useState('');
+  const { isLoggedIn, login } = useAuth();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null); // Initialize error state
+
+  const handleLogin = async () => {
+    try {
+      const userData = {
+        email: email,
+        password: password,
+      };
+      const response = await axios.post('https://jwt-postgre-tes.onrender.com/auth/login', userData);
+          console.log(response);
+    
+      
+      const token = response.data.token;
+
+      console.log('Login successful. Token:', token);
+      login(token);
+
+      navigation.navigate('Back');
+
+    } catch (error) {
+      if (error.response) {
+        // The request was made, but the server responded with a status code
+        // outside the range of 2xx
+        console.error('Server responded with an error:', error.response.status, error.response.data);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('No response received from the server:', error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error('Error during login:', error.message);
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text>Login Screen</Text>
       <TextInput
         style={styles.input}
-        placeholder="Username"
-        onChangeText={(text) => setUsername(text)}
+        placeholder="Email"
+        onChangeText={(text) => setEmail(text)}
       />
       <TextInput
         style={styles.input}
@@ -18,11 +54,8 @@ function LoginView({ navigation }) {
         onChangeText={(text) => setPassword(text)}
         secureTextEntry
       />
-      <Button
-        title="Submit"
-        onPress={() => navigation.navigate('Home')}
-        color="#3498db" // Custom color for the button
-      />
+      <Button title="Submit" onPress={handleLogin} color="#3498db" />
+      {error && <Text style={styles.error}>{error}</Text>}
     </View>
   );
 }
@@ -45,6 +78,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 12,
     paddingLeft: 8,
+  },
+  error: {
+    color: 'red',
+    marginTop: 10,
   },
 });
 

@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, Button, ActivityIndicator} from 'react-native';
-import Recipe from '../components/RecipeComponent'
+import Recipe from '../components/RecipeComponent';
+import { useAuth } from '../contexts/AuthContext';
 
 function HomeView({ navigation }) { 
     const [isLoading, setIsLoading] = useState(true);
