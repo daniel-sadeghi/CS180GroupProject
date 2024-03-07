@@ -217,9 +217,30 @@ function ProfileView({ navigation }) {
 
         </View>
         </>}
-        {!token
-        //add login and register design here
-        }
+        {
+  !token &&
+    <>
+    <TouchableHighlight
+              style={{ ...styles.openButton, backgroundColor: "green" }}
+              onPress={() => {
+
+              }}
+            >
+              <Text style={styles.textStyle2}>Log In</Text>
+    </TouchableHighlight>
+    
+    <TouchableHighlight
+      style={{ ...styles.openButton, backgroundColor: "green" }}
+      onPress={() => {
+
+      }}
+    >
+      <Text style={styles.textStyle2}>Sign Up</Text>
+    </TouchableHighlight>
+    </>
+
+}
+
     </View>
   );
 }
