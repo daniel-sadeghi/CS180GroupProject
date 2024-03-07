@@ -50,7 +50,7 @@ const RecipeView = ({navigation, route}) => {
                     <FlatList
                         data={response.ingredients}
                         renderItem={({item}) => <Ingredient name={item.name} price={item.price} image={"https://spoonacular.com/cdn/ingredients_100x100/"+item.image}/>}
-                        keyExtractor={item=>item.id}
+                        keyExtractor={(item, index) => item.name + index}
                     />
                 </View>
                 <View style={styles.total}>
