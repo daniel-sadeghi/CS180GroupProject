@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, TouchableHighlight } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 // npx expo install expo-image-picker -- --force
 import { Ionicons } from '@expo/vector-icons';
@@ -8,6 +8,7 @@ import * as FileSystem from 'expo-file-system';
 function ProfileView({ navigation }) {
   const [image, setImage] = useState(undefined);
   const [selectedItems, setSelectedItems] = useState({});
+  const [showSaveButton, setShowSaveButton] = useState(false);
   const [user, setUser] = useState(undefined);
   
   useEffect(() => {
@@ -64,8 +65,20 @@ function ProfileView({ navigation }) {
   }
 
   const handlePress = async (item) => {
-    setSelectedItems(prevState => ({ ...prevState, [item]: !prevState[item] }));
-    await handleSubmitRestriction();
+    setSelectedItems(prevState => 
+      
+      { 
+        const updatedState = { ...prevState };
+    // Toggle the selected state of the item
+    updatedState[item] = !prevState[item];
+    // Log the updated state (this will reflect the changes made by setState)
+    console.log(updatedState);
+    return updatedState;
+      }
+      
+      );
+    
+    console.log(selectedItems)
   };
 
   const pickImage = async () => {
@@ -109,7 +122,7 @@ function ProfileView({ navigation }) {
         body: formData,
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZjZkNDBkNDQtODUzMy00YTAxLWIxZmYtOWFiYzIwMDNjNjQ4In0sImlhdCI6MTcwOTc4OTc2OCwiZXhwIjoxNzA5NzkzMzY4fQ.QdN2GE2daZc4cpQdiQ5NtWfeHFHFEnPTqotZpBFhmYA', // Replace with your actual token
+          'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGIwODk4ZTEtNzYzMS00OWY3LTliN2QtNTk4NzJiOTZiOWVjIn0sImlhdCI6MTcwOTc5Nzc2NywiZXhwIjoxNzA5ODAxMzY3fQ.djktyN_lBBSmK766M5m8WDFSP4gCLwAjzf8sHwcXi6g', // Replace with your actual token
         },
       })
         .then(response => response.json())
@@ -157,18 +170,20 @@ function ProfileView({ navigation }) {
 
       <Text 
         style={styles.name}
-        >
-          {"John Doe"}
+      >
+          {user?.user_name}
       </Text>
       
       {/* Have the users name above*/}
       <Text 
-        style={styles.email}>{"JohnDoe@email.com"}
+        style={styles.email}
+      >
+        {user?.user_email}
       </Text> 
       {/* Have the users email above*/}
 
         <View style={styles.modalView}>
-          <Text style={styles.textStyle}>Dietary Restrictions</Text>
+          <Text style={styles.textStyle1}>Dietary Restrictions</Text>
           <TouchableOpacity style={selectedItems['gluten_free'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('gluten_free')}>
             <Image source={require('../assets/glutenfree.png')} style={styles.icon}/>
             <Text style={styles.menuItemText}>Gluten Free</Text>
@@ -191,6 +206,15 @@ function ProfileView({ navigation }) {
           </TouchableOpacity>
         </View>
 
+        <TouchableHighlight
+              style={{ ...styles.openButton, backgroundColor: "green" }}
+              onPress={() => {
+                handleSubmitRestriction();
+              }}
+            >
+              <Text style={styles.textStyle2}>Save</Text>
+            </TouchableHighlight>
+
     </View>
   );
 }
@@ -206,7 +230,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     borderRadius: 30,
-    padding: 45,
+    padding: 40,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -224,19 +248,26 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     padding: 10,
     elevation: 2,
-    marginTop: 15,
+    marginTop: 10,
   },
   button: {
     backgroundColor: 'green',
     padding: 10,
     borderRadius: 30,
   },
-  textStyle: {
+  textStyle1: {
     color: "#13A306",
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 15,
+  },
+  textStyle2: {
+    color: "#13A306",
+    fontSize: 12,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 0,
   },
   profilePicture: {
     width: 100,
