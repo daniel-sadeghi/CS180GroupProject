@@ -215,6 +215,9 @@ function ProfileView({ navigation }) {
 
         </View>
         </>}
+        {!token
+        //add login and register design here
+        }
     </View>
   );
 }
