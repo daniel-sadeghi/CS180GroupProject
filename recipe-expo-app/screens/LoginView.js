@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function LoginView({ navigation }) {
   const { isLoggedIn, login } = useAuth();
@@ -20,9 +21,19 @@ function LoginView({ navigation }) {
     
       
       const token = response.data.token;
-
       console.log('Login successful. Token:', token);
+
       login(token);
+
+      const favoritesRaw = await axios.get('https://jwt-postgre-tes.onrender.com/favorites', {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      const favoritesData = favoritesRaw.data;
+      const foodIds = [...favoritesData.map((item) => item.food_id)];
+      await AsyncStorage.setItem('favorites', JSON.stringify(foodIds));
+      console.log('User Favorites:', JSON.stringify(foodIds));
 
       navigation.navigate('Back');
 

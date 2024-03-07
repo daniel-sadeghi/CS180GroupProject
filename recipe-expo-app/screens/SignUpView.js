@@ -69,6 +69,7 @@ function SignUpView({ navigation }) {
           //   console.error('Registration failed');
           // }
           login(token);
+          await AsyncStorage.addItem('favorites');
 
           navigation.navigate('Back');
     } catch (error) {
