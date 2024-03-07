@@ -21,7 +21,6 @@ function ProfileView({ navigation }) {
   const fetchUserData = async () => {
 
     if(token != null){
-      console.log("Attempting to pull profile with token: ", token);
       setIsLoading(true); // Set isLoading to true while fetching
     try {
       const response = await axios.get('https://jwt-postgre-tes.onrender.com/profile', {
@@ -29,9 +28,7 @@ function ProfileView({ navigation }) {
           Authorization: `${token}`,
         },
       });
-      console.log(response.data);
       setUserData(response.data);
-      console.log('User Data:', userData);
     } catch (error) {
       console.error('Error fetching user data:', error);
     }

@@ -45,7 +45,9 @@ function HomeView({ navigation }) {
         }
 
         return response.map(response => (
-                <Recipe key={response.id} id={response.id} title={response.title} image={response.image} navigation={navigation}/>
+                <Recipe key={response.id} id={response.id} title={response.title} image={response.image} navigation={navigation}
+                    sourceURL={response.sourceUrl} spoonacularSourceURL={response.spoonacularSourceUrl}
+                />
             
         ));
     }

@@ -15,6 +15,9 @@ const RecipeView = ({navigation, route}) => {
     const [error, setError] = useState();
     let title = route.params.title;
     let id = route.params.id;
+    let image = route.params.image;
+    let sourceURL = route.params.sourceURL;
+    let spoonacularSourceURL = route.params.spoonacularSourceURL;
     const { isLoggedIn, login } = useAuth();
     const { token } = useAuth();
     const [favortieStartState, setFavoriteStartState] = useState(false);
@@ -39,7 +42,36 @@ const RecipeView = ({navigation, route}) => {
             setIsLoading(false);
         };
 
-        fetchDetails();
+        const favortieStartCheck = async () => {
+            if(token != null){
+                console.log("Attempting to pull favorites with token: ", token);
+                
+              try {
+                const res = await axios.get('https://jwt-postgre-tes.onrender.com/favorites', {
+                  headers: {
+                    Authorization: `${token}`,
+                  },
+                });
+                console.log('favorites data: ' , res.data);
+    
+                if (res.data && res.data.length > 0) {
+                    const foodIds = res.data.map((item) => item.food_id);
+                    const idExists = foodIds.includes(id);
+                    setFavoriteStartState(idExists);
+                }else{
+                    setFavoriteStartState(false);
+                  }
+               } 
+                catch (error) {
+                console.error('Error fetching user favorites:', error);
+              }
+              }
+              else{
+                console.log("Not Logged in");
+              }
+        };
+
+        fetchDetails().then(favortieStartCheck());
         
         navigation.setOptions({
             title: title === '' ? 'No title' : title,
@@ -62,7 +94,9 @@ const RecipeView = ({navigation, route}) => {
                     <AddToCartButton style={styles.addToCartButton}>
                         <Text style={{color: "white", fontWeight: "bold", textAlign: "center"}}>Add To Cart</Text>
                     </AddToCartButton>
-                    {isLoggedIn ? <FavoriteButton isHeartToggled={favortieStartState} /> : null}
+                    {isLoggedIn ? <FavoriteButton 
+                    heartStartState={favortieStartState} id={id} title={title} imageURL={image} sourceURL={sourceURL} spoonacularSourceURL={spoonacularSourceURL} 
+                    /> : null}
                 </View>
             </View>
         );
@@ -75,48 +109,6 @@ const RecipeView = ({navigation, route}) => {
             </View>
         );
     }
-
-    function isIdInFavorites(idToCheck, json) {
-        for (const item of json.items) {
-          if (item.id === idToCheck) {
-            return true;
-          }
-        }
-        return false;
-      }
-
-    const favortieStartCheck = async () => {
-        if(token != null){
-            console.log("Attempting to pull favorites with token: ", token);
-            
-          try {
-            const res = await axios.get('https://jwt-postgre-tes.onrender.com/favorites', {
-              headers: {
-                Authorization: `${token}`,
-              },
-            });
-            console.log('favorites data: ' , res.data);
-            if(res.data != null){
-            const idExists = isIdInFavorites(response.id, res.data);
-            if(!idExists){
-                setFavoriteStartState(false);
-            }
-            else{
-                setFavoriteStartState(true);
-            }
-            }else{
-                setFavoriteStartState(false);
-            }
-          } catch (error) {
-            console.error('Error fetching user favorites:', error);
-          }
-          }
-          else{
-            console.log("Not Logged in");
-          }
-    }
-
-
     return (
         <SafeAreaView style={styles.safeArea}>
             {isLoading ? loadingIndicator() : getIngredients()}
