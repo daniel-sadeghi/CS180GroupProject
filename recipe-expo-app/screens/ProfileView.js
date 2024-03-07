@@ -9,6 +9,7 @@ function ProfileView({ navigation }) {
   const [image, setImage] = useState(undefined);
   const [selectedItems, setSelectedItems] = useState({});
   const [user, setUser] = useState(undefined);
+  const token = null;  // Replace with your actual token
   
   useEffect(() => {
     const fetchUser = async () =>{
@@ -16,7 +17,7 @@ function ProfileView({ navigation }) {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGIwODk4ZTEtNzYzMS00OWY3LTliN2QtNTk4NzJiOTZiOWVjIn0sImlhdCI6MTcwOTc5ODcyOSwiZXhwIjoxNzA5ODAyMzI5fQ.VeEKMSDho9BUXpO1JpYztO3MXdMoyhxuUoQGtICfJ50`,
+            Authorization: token,
           },
         })
         .then(res => res.json())
@@ -52,7 +53,7 @@ function ProfileView({ navigation }) {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGIwODk4ZTEtNzYzMS00OWY3LTliN2QtNTk4NzJiOTZiOWVjIn0sImlhdCI6MTcwOTc5ODcyOSwiZXhwIjoxNzA5ODAyMzI5fQ.VeEKMSDho9BUXpO1JpYztO3MXdMoyhxuUoQGtICfJ50`,
+        Authorization: token,
       },
       body: JSON.stringify({ restriction: concatenatedString }),
     })
@@ -121,7 +122,7 @@ function ProfileView({ navigation }) {
         body: formData,
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGIwODk4ZTEtNzYzMS00OWY3LTliN2QtNTk4NzJiOTZiOWVjIn0sImlhdCI6MTcwOTc5ODcyOSwiZXhwIjoxNzA5ODAyMzI5fQ.VeEKMSDho9BUXpO1JpYztO3MXdMoyhxuUoQGtICfJ50', // Replace with your actual token
+          'Authorization': token, // Replace with your actual token
         },
       })
       .then(response => response.json())
@@ -179,7 +180,7 @@ function ProfileView({ navigation }) {
         {user?.user_email}
       </Text> 
       {/* Have the users email above*/}
-
+ {token && <>
         <View style={styles.modalView}>
           <Text style={styles.textStyle1}>Dietary Restrictions</Text>
           <TouchableOpacity style={selectedItems['gluten_free'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('gluten_free')}>
@@ -202,9 +203,8 @@ function ProfileView({ navigation }) {
             <Image source={require('../assets/pescetarian.png')} style={styles.icon}/>
             <Text style={styles.menuItemText}>Pescetarian</Text>
           </TouchableOpacity>
-        </View>
 
-        <TouchableHighlight
+          <TouchableHighlight
               style={{ ...styles.openButton, backgroundColor: "green" }}
               onPress={() => {
                 handleSubmitRestriction();
@@ -213,6 +213,8 @@ function ProfileView({ navigation }) {
               <Text style={styles.textStyle2}>Save</Text>
             </TouchableHighlight>
 
+        </View>
+        </>}
     </View>
   );
 }
