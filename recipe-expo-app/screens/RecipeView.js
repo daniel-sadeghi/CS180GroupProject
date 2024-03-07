@@ -44,7 +44,6 @@ const RecipeView = ({navigation, route}) => {
 
         const favortieStartCheck = async () => {
             if(token != null){
-                console.log("Attempting to pull favorites with token: ", token);
                 
               try {
                 const res = await axios.get('https://jwt-postgre-tes.onrender.com/favorites', {
@@ -52,7 +51,6 @@ const RecipeView = ({navigation, route}) => {
                     Authorization: `${token}`,
                   },
                 });
-                console.log('favorites data: ' , res.data);
     
                 if (res.data && res.data.length > 0) {
                     const foodIds = res.data.map((item) => item.food_id);

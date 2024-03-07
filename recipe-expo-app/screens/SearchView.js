@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, TextInput, StyleSheet, Button, ScrollView, ActivityIndicator } from 'react-native';
-import Recipe from '../components/RecipeComponent'
-import {useNavigation} from '@react-navigation/native'
+import Recipe from '../components/RecipeComponent';
+import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
 
 function SearchView({ navigation }) {
   const [search, setSearch] = useState('');
@@ -16,9 +17,15 @@ function SearchView({ navigation }) {
         const response = await fetch(
             `https://api.spoonacular.com/recipes/complexSearch?query=${query}&apiKey=${API_KEY}`
         ).then(response => response.json());
-        console.log("Here are the search responses");
-        console.log(response.results);
-        setResults(response.results); // Update the suggestions state
+          setResults(response.results);
+          const allIds = results.map(recipe => recipe.id);
+          const promises = allIds.map((item) => {
+            return axios.get(`https://api.spoonacular.com/recipes/${item}/information?includeNutrition=false&apiKey=${API_KEY}`);
+          });
+          const responses = await Promise.all(promises);
+          const data = responses.map((response) => response.data);
+          setResults(data);
+        
     } catch (error) {
         console.error('Error fetching search suggestions:', error);
     }
@@ -39,7 +46,9 @@ const renderRecipes = () => {
     return <Text>Oops! {error}</Text>;
   }
   return results.map((recipe) => (
-    <Recipe key={recipe.id} title={recipe.title} image={recipe.image}/>
+    <Recipe key={recipe.id} id={recipe.id} title={recipe.title} image={recipe.image} navigation={navigation}
+      sourceURL={recipe.sourceUrl} spoonacularSourceURL={recipe.spoonacularSourceUrl}
+    />
   ));
 };
 

@@ -8,18 +8,16 @@ import { useFavoriteContext } from '../contexts/FavoriteContext';
 const FavoriteButton = ({heartStartState, id, title, imageURL, sourceURL, spoonacularSourceURL}) => {
   const [isHeartToggled, setHeartToggled] = useState(heartStartState);
   const {token} = useAuth();
-  const { currentFavorites, setCurrentFavorites } = useFavoriteContext();
 
   const handleToggleHeart = () => {
     // Toggle the heart state
-    setHeartToggled(!isHeartToggled);
-
+    setHeartToggled(!isHeartToggled); 
   };
 
   useEffect(() => {
-      console.log("heart toggled is:" , isHeartToggled);
 
       if(isHeartToggled == true){
+
         const addFavorite = async () => {
         try {
             // post onto favorites table
@@ -33,15 +31,7 @@ const FavoriteButton = ({heartStartState, id, title, imageURL, sourceURL, spoona
             headers: {
               Authorization: `${token}`,
             },
-          }).then(
-          // now add it to the favorites context
-          await axios.get('https://jwt-postgre-tes.onrender.com/favorites', 
-            {
-              headers: {
-                Authorization: `${token}`,
-              }
-            }).then(res => setCurrentFavorites(res.data)));
-            console.log("Current Favorites: " ,currentFavorites);
+          });
         } catch (error) {
           console.error('Error adding favorite:', error);
         }
@@ -55,15 +45,7 @@ const FavoriteButton = ({heartStartState, id, title, imageURL, sourceURL, spoona
             headers: {
               Authorization: `${token}`,
             }
-          }).then(
-          // now remove it from favorites context
-          await axios.get('https://jwt-postgre-tes.onrender.com/favorites', 
-            {
-              headers: {
-                Authorization: `${token}`,
-              }
-            }).then(res => setCurrentFavorites(res.data)));
-            console.log("Current Favorites: " ,currentFavorites);
+          });
         } catch (error) {
           console.error('Error removing favorite:', error);
         }

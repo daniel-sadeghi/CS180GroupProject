@@ -14,89 +14,93 @@ function FavoritesView({ navigation }) {
   const API_KEY = "0e05e31e1192449ab972630943bc0865";
   let [isLoading, setIsLoading] = useState(true);
   let [response, setResponse] = useState();
-  const { currentFavorites } = useFavoriteContext();
   
-  async function fetchFavorites() {
-  // Get Favorites
-    try {
-      await axios.get('https://jwt-postgre-tes.onrender.com/favorites', {
-        headers: {
-          Authorization: `${token}`,
-        },
-      }).then(res => setResponse(res.data));
-     } 
-      catch (error) {
-      console.error('Error fetching user favorites:', error);
+// Modify fetchFavorites to return the response
+async function fetchFavorites() {
+  try {
+    setIsLoading(true);
+    const response = await axios.get('https://jwt-postgre-tes.onrender.com/favorites', {
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
+    setResponse(response);
+    return response.data; // Return the data
+  } catch (error) {
+    console.error('Error fetching user favorites:', error);
+    throw error;
+  }
+}
+
+// Modify transformFavorites to accept the response as an argument
+function transformFavorites(res) {
+
+  const foodIds = [...res.map((item) => item.food_id)];
+
+    return foodIds;
+}
+
+ // Modify createFavoriteCards to remove .then() and use await instead
+async function createFavoriteCards(foodIds) {
+
+  try {
+    if (favFoodIds.length > 0) {
+      const promises = favFoodIds.map((item) => {
+        return axios.get(`https://api.spoonacular.com/recipes/${item}/information?includeNutrition=false&apiKey=${API_KEY}`);
+      });
+
+      const responses = await Promise.all(promises);
+      const data = responses.map((response) => response.data);
+
+      const filteredData = removeDuplicatesFromArray(data);
+
+      setFavorites(filteredData);
+    }
+    setIsLoading(false);
+  } catch (error) {
+    console.error('Error fetching favorite recipes:', error);
+    throw error;
+  }
+}
+
+function removeDuplicatesFromArray(arr) {
+  const uniqueIds = new Set();
+  const uniqueArray = [];
+
+  for (const obj of arr) {
+    // Check if the ID is already in the Set
+    if (!uniqueIds.has(obj.id)) {
+      uniqueIds.add(obj.id); // Add the ID to the Set
+      uniqueArray.push(obj); // Add the object to the uniqueArray
     }
   }
 
-  function transformFavorites() {
-      console.log("response in transform: ", response);
-      //if response isnt null
-      if (response && response.length > 0) {
-        const foodIds = response.map((item) => item.food_id);
-        setFavFoodIds(foodIds);
-      }
-      // else if the favorites context is updated use it
-      else if(currentFavorites && currentFavorites.length > 0){
-        const foodIds = currentFavorites.map((item) => item.food_id);
-        setFavFoodIds(foodIds);
-      }
-      else{
-        setFavFoodIds([]);
-      }
-    console.log("favorite food ids before creating cards: " , favFoodIds);
-    }
-  async function createFavoriteCards() {
-    // Get each recipe card in favorites
-    console.log("favorite food ids when creating cards: " , favFoodIds);
-     try {
-        if(favFoodIds.length > 0){
-        const promises = favFoodIds.map((item) => {
-          return axios.get(`https://api.spoonacular.com/recipes/${item}/information?includeNutrition=false&apiKey=${API_KEY}`);
-        });
-        console.log("Promises map:" , promises);
-        Promise.all(promises)
-        .then((responses) => {
-        const data = responses.map((response) => response.data);
-        const filteredData = removeDuplicatesFromArray(data);
-        setFavorites(filteredData);
-       }) 
-        }
-
-        console.log("Favorites: " , favorites);
-        setIsLoading(false);
-        }
-        catch (error) {
-        console.error('Error fetching favorite recipes:', error);
-        }
-      }
-
-      function removeDuplicatesFromArray(arr) {
-        const uniqueObjects = [];
-        const seenKeys = new Set();
-      
-        for (const obj of arr) {
-          // Convert the object to a string representation
-          const objString = JSON.stringify(obj);
-      
-          if (!seenKeys.has(objString)) {
-            seenKeys.add(objString);
-            uniqueObjects.push(obj);
-          }
-        }
-      }
+  return uniqueArray;
+}
 
       useFocusEffect(
         React.useCallback(() => {
-          if(token != null){
-          fetchFavorites().then(transformFavorites()).then(createFavoriteCards());
+          const fetchData = async () => {
+            try {
+              if (token != null) {
+                const response = await fetchFavorites();
+                const foodIds = await transformFavorites(response);
+                setFavFoodIds(foodIds); // Update favFoodIds state
+              } else {
+                console.log("Not Logged In");
+              }
+            } catch (error) {
+              console.error('Error fetching and processing user favorites:', error);
             }
-          else{
-          console.log("Not Logged In");
-          }
-        }, [isLoggedIn, currentFavorites])
+          };
+          fetchData(); // Call the fetchData function
+        }, [token])
       );
+
+      useEffect(() => {
+        // Trigger the update when favFoodIds changes
+        createFavoriteCards(favFoodIds);
+      }, [favFoodIds]);
 
     const getFavoriteRecipes = () => {
       if (isLoading) {
@@ -107,14 +111,13 @@ function FavoritesView({ navigation }) {
               <Recipe key={favorites.id} id={favorites.id} title={favorites.title} image={favorites.image} navigation={navigation}
                   sourceURL={favorites.sourceUrl} spoonacularSourceURL={favorites.spoonacularSourceUrl}
               />
-          
       ));
   }
 
   return (
     <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.contentContainer}>
-                {getFavoriteRecipes()}
+                {isLoggedIn ? getFavoriteRecipes() : <Text>Please Log in</Text>}
             </ScrollView>
         </SafeAreaView>
   );
