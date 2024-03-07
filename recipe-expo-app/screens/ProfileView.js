@@ -259,6 +259,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 0,
+    fontFamily: "Palatino",
   },
   profilePicture: {
     width: 100,
@@ -272,6 +273,7 @@ const styles = StyleSheet.create({
     color: '#13A306',
     fontWeight: 'bold',
     marginTop: 15,
+    fontFamily: "Palatino",
   },
   editButton: {
     backgroundColor: 'green',
@@ -285,6 +287,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'gray',
     marginBottom: 20,
+    fontFamily: "Palatino",
   },
   guest: {
     fontSize: 16,
@@ -292,6 +295,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 20,
     textAlign: 'center',
+    fontFamily: "Palatino",
   },
   selectedMenuItem: {
     flexDirection: 'row',
@@ -315,6 +319,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 18,
     color: '#333',
+    fontFamily: "Palatino",
   },
   icon: {
     width: 20,

@@ -138,10 +138,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
+    fontFamily: "Palatino",
   },
   link: {
     color: 'blue',
     fontSize: 16,
     marginVertical: 10,
+    fontFamily: "Palatino",
   },
 });

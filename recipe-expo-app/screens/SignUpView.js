@@ -69,6 +69,7 @@ function SignUpView({ navigation }) {
           //   console.error('Registration failed');
           // }
           login(token);
+          await AsyncStorage.addItem('favorites');
 
           navigation.navigate('Back');
     } catch (error) {
@@ -143,6 +144,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     marginBottom: 16,
+    fontFamily: "Palatino",
   },
   input: {
     height: 40,
@@ -152,6 +154,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingLeft: 8,
     textAlign: 'center',
+    fontFamily: "Palatino",
   },
 });
 
