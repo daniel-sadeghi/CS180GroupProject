@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, Button, ActivityIndicator} from 'react-native';
-import Recipe from '../components/RecipeComponent'
+import Recipe from '../components/RecipeComponent';
+import { useAuth } from '../contexts/AuthContext';
 
 function HomeView({ navigation }) { 
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState();
-    const [response, setResponse] = useState();
+    const { isLoggedIn, login } = useAuth();
+    let [isLoading, setIsLoading] = useState(true);
+    let [error, setError] = useState();
+    let [response, setResponse] = useState();
 
     useEffect(() => {
         const URI = 'https://api.spoonacular.com/recipes/random';
@@ -43,7 +45,9 @@ function HomeView({ navigation }) {
         }
 
         return response.map(response => (
-                <Recipe key={response.id} id={response.id} title={response.title} image={response.image} navigation={navigation}/>
+                <Recipe key={response.id} id={response.id} title={response.title} image={response.image} navigation={navigation}
+                    sourceURL={response.sourceUrl} spoonacularSourceURL={response.spoonacularSourceUrl}
+                />
             
         ));
     }

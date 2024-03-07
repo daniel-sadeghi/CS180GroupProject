@@ -11,7 +11,7 @@ router.get("/", authorization, async (req, res) => {
     //   "SELECT user_name FROM users WHERE user_id = $1",
     //   [req.user.id]
     // );
-
+    
     const user = await pool.query(
       "SELECT user_id, user_name, user_email, restrictions, image FROM users WHERE user_id = $1",
       [req.user.id]
