@@ -12,6 +12,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 //Route is an object that contains the props passed when using react navigate.
 const RecipeView = ({navigation, route}) => {
+    console.log(route.params);
     const [isLoading, setIsLoading] = useState(true);
     const [response, setResponse] = useState();
     const [error, setError] = useState();
@@ -20,6 +21,7 @@ const RecipeView = ({navigation, route}) => {
     let id = route.params.id;
     let sourceURL = route.params.sourceURL;
     let spoonacularSourceURL = route.params.spoonacularSourceURL;
+    let image = route.params.image;
     const [isFavorite, setisFavorite] = useState(false);
     const { token } = useAuth();
 
@@ -64,11 +66,12 @@ const RecipeView = ({navigation, route}) => {
                 await FavoriteStorage.removeFavorite(id, token);
             } else {
                 console.log("Im adding a favorite");
-                await FavoriteStorage.addFavorite(id, title, imageURL, sourceURL, spoonacularSourceURL, token);
+                await FavoriteStorage.addFavorite(id, title, image, sourceURL, spoonacularSourceURL, token);
             }
             setisFavorite(!isFavorite);
         } catch (error) {
             // Display an alert if the operation failed
+            console.error(error);
             Alert.alert('Error', isFavorite ? 'Trouble accessing account' : 'You need to log in');
         }
     };
