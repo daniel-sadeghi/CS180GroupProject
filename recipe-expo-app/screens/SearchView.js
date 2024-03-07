@@ -11,7 +11,7 @@ function SearchView({ navigation }) {
 
   async function fetchSearch(query) {
     try {
-        const response = await fetchSpoonData('complexSearch',[`query=${query}`]).then(response => response.json());
+        const response = await fetchSpoonData('complexSearch',[`query=${query}`]);
         setSearch(response.results); // Update the suggestions state
     } catch (error) {
         console.error('Error fetching search suggestions:', error);

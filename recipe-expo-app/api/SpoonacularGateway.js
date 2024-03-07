@@ -5,14 +5,18 @@ const API_KEY = "0e05e31e1192449ab972630943bc0865" //TODO Fetch the API Key from
 
 const fetchSpoonData = async (endpoint, options=[]) => {
     let url = URI + `/${endpoint}?`;
-    options.forEach(option => {
-        url += `&${option}`;
-    });
+    for (let i = 0; i < options.length; i++) {
+        if (i !== 0) {
+            url += '&';
+        }
+        url += options[i];
+    }
     console.log('URL:', url);
 
     const cachedResponse = await AsyncStorage.getItem(url);
 
     if (cachedResponse !== null) {
+        console.log('Cache Response!');
         return JSON.parse(cachedResponse);
     } else {
         const urlWithKey = url + `&apiKey=${API_KEY}`;
