@@ -1,12 +1,14 @@
 import React from 'react';
 import { Button } from 'react-native';
 import { useAuth } from './AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LogoutButton = () => {
   const { isLoggedIn, logout } = useAuth();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // Perform any additional cleanup or API calls on logout if needed
+    await AsyncStorage.removeItem('favorites');
     logout();
   };
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function LoginView({ navigation }) {
   const { isLoggedIn, login } = useAuth();
@@ -23,6 +24,7 @@ function LoginView({ navigation }) {
 
       console.log('Login successful. Token:', token);
       login(token);
+      await AsyncStorage.addItem('favorites');
 
       navigation.navigate('Back');
 
