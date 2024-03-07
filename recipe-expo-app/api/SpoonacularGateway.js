@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const URI = 'https://api.spoonacular.com/recipes';
+const URI = 'https://api.spoonacular.com/';
 const API_KEY = "0e05e31e1192449ab972630943bc0865" //TODO Fetch the API Key from the backend server
 
 const fetchSpoonData = async (endpoint, options=[]) => {
@@ -11,16 +11,16 @@ const fetchSpoonData = async (endpoint, options=[]) => {
         }
         url += options[i];
     }
-    console.log('URL:', url);
 
     const cachedResponse = await AsyncStorage.getItem(url);
 
     if (cachedResponse !== null) {
-        console.log('Cache Response!');
+        console.log(`Fetched ${url} from cache`);
         return JSON.parse(cachedResponse);
     } else {
         const urlWithKey = url + `&apiKey=${API_KEY}`;
         const getResponse = await fetch(urlWithKey).then(response => response.json());
+        console.log(`Fetched ${url} from API`);
         await AsyncStorage.setItem(url, JSON.stringify(getResponse));
         return getResponse;
     }

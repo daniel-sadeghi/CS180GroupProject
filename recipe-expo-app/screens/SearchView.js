@@ -11,7 +11,8 @@ function SearchView({ navigation }) {
 
   async function fetchSearch(query) {
     try {
-        const response = await fetchSpoonData('complexSearch',[`query=${query}`]);
+        const response = await fetchSpoonData('recipes/complexSearch',[`query=${query}`]);
+        console.log(response);
         setSearch(response.results); // Update the suggestions state
     } catch (error) {
         console.error('Error fetching search suggestions:', error);
@@ -24,11 +25,11 @@ const getSearchResults = () => {
       return <ActivityIndicator size='large' />;
   }
   if (error) {
-      return <Text>Oops! {error}</Text>;
+      return <Text>{error}</Text>;
   }
 
   return search.map(search => (
-          <Recipe key={search.id} title={search.title} image={search.image}/>
+          <Recipe key={search.id} id={search.id} title={search.title} image={search.image} navigation={navigation}/>
       
   ));
 }

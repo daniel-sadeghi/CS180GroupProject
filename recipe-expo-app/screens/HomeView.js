@@ -14,17 +14,14 @@ function HomeView({ navigation }) {
         const fetchRecipe = async () => {
             try {
                 //const res = await fetch(url).then(response => response.json());
-                const res = await fetchSpoonData('random',['number=5', 'include-tags=vegetarian']);
+                const res = await fetchSpoonData('recipes/random',['number=5']);
                 if (res && res.recipes) {
                     setResponse(res.recipes);
-                    console.log(`Success: Fetched response from API`);
                 } else {
                     console.log(`Error: No recipes in response from API`);
                 }
-                console.log(`Success: Fetched response from API`);
             } catch (error) {
-                console.log(`Error: No response from API`);
-                
+                console.log(`Error fetching data from API: ${error.message}`);
             }
             setIsLoading(false);
         };

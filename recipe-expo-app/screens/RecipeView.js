@@ -3,7 +3,7 @@ import {View, Text, Pressable, ActivityIndicator, ScrollView, FlatList, SafeArea
 import Ingredient from '../components/Ingredient';
 import AddToCartButton from '../components/AddToCartButton';
 import USDFormat from '../utils/USDFormat';
-
+import fetchSpoonData from '../api/SpoonacularGateway';
 //Route is an object that contains the props passed when using react navigate.
 const RecipeView = ({navigation, route}) => {
     //const [title, setTitle] = useState(route.params.title);
@@ -17,21 +17,17 @@ const RecipeView = ({navigation, route}) => {
 
     useEffect(()=>{
         const URI = `https://api.spoonacular.com/recipes/${id}/priceBreakdownWidget.json`;
-        const API_KEY = "0e05e31e1192449ab972630943bc0865";
-        const options = `apiKey=${API_KEY}&includeNutrition=false`;
-        const url = `${URI}?${options}`
 
         const fetchDetails = async () => {
             try {
                 console.log(`Fetching from ${URI}`);
-                const res = await fetch(url).then(response => response.json());
+                const res = await fetchSpoonData(`recipes/${id}/priceBreakdownWidget.json`,['includeNutrition=false']);
                 setResponse(res);
                 setTotal(res.ingredients.reduce((a,b) => a+b.price,0));
             } catch (error) {
-                console.log(`Error: No response from ${URI}`);
+                console.log(`Error fetching data from API: ${error.message}`);
                 
             }
-            console.log(`Success: Fetched response from ${URI}`);
             setIsLoading(false);
         };
 
@@ -50,7 +46,7 @@ const RecipeView = ({navigation, route}) => {
                     <FlatList
                         data={response.ingredients}
                         renderItem={({item}) => <Ingredient name={item.name} price={item.price} image={"https://spoonacular.com/cdn/ingredients_100x100/"+item.image}/>}
-                        keyExtractor={item=>item.id}
+                        keyExtractor={item=>item.name}
                     />
                 </View>
                 <View style={styles.total}>
