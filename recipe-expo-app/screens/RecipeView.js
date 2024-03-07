@@ -21,6 +21,7 @@ const RecipeView = ({navigation, route}) => {
     let sourceURL = route.params.sourceURL;
     let spoonacularSourceURL = route.params.spoonacularSourceURL;
     const [isFavorite, setisFavorite] = useState(false);
+    const { token } = useAuth();
 
     useEffect(()=>{
         const fetchDetails = async () => {
@@ -60,10 +61,10 @@ const RecipeView = ({navigation, route}) => {
     const handlePress = async () => {
         try {
             if (isFavorite) {
-                await FavoriteStorage.removeFavorite(id, useAuth().token);
+                await FavoriteStorage.removeFavorite(id, token);
             } else {
                 console.log("Im adding a favorite");
-                await FavoriteStorage.addFavorite(id, title, imageURL, sourceURL, spoonacularSourceURL, useAuth().token);
+                await FavoriteStorage.addFavorite(id, title, imageURL, sourceURL, spoonacularSourceURL, token);
             }
             setisFavorite(!isFavorite);
         } catch (error) {
