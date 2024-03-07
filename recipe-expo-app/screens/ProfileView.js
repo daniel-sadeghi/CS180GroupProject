@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, TouchableHighlight } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, TouchableHighlight, Button } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 // npx expo install expo-image-picker -- --force
 import { Ionicons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
+import LogoutButton from '../contexts/LogoutButton';
 
 function ProfileView({ navigation }) {
   const [image, setImage] = useState(undefined);
@@ -181,6 +182,7 @@ function ProfileView({ navigation }) {
       </Text> 
       {/* Have the users email above*/}
  {token && <>
+        <LogoutButton/>
         <View style={styles.modalView}>
           <Text style={styles.textStyle1}>Dietary Restrictions</Text>
           <TouchableOpacity style={selectedItems['gluten_free'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('gluten_free')}>
@@ -322,6 +324,13 @@ const styles = StyleSheet.create({
   icon: {
     width: 20,
     height: 20,
+  },
+  guest: {
+    fontSize: 16,
+    color: 'gray',
+    marginBottom: 20,
+    marginTop: 20,
+    textAlign: 'center',
   },
 });
 
