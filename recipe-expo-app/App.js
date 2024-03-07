@@ -12,14 +12,14 @@ const Stack = createNativeStackNavigator();
 const App = () => {
     return (
         <AuthProvider>
-        <FavoriteProvider>
-        <NavigationContainer>
-            <Stack.Navigator>
-                <Stack.Screen name="MainView" component={TabNavigator} options={{headerShown: false}}/>
-                <Stack.Screen name="RecipeView" component={RecipeView}/>
-            </Stack.Navigator>
-        </NavigationContainer>
-        </FavoriteProvider>
+            <FavoriteProvider>
+                <NavigationContainer>
+                    <Stack.Navigator>
+                        <Stack.Screen name="MainView" component={TabNavigator} options={{headerShown: false}}/>
+                        <Stack.Screen name="RecipeView" component={RecipeView}/>
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </FavoriteProvider>
         </AuthProvider>
     );
 };
