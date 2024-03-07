@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    position: 'absolute' ,top: 50, left: 0, right: 0, bottom: 50,
+    position: 'absolute' ,top: 50, left: 0, right: 0, bottom: 30,
     alignItems: 'center',
   },
   modalView: {
