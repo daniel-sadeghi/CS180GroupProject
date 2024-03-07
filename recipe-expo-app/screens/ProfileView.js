@@ -11,7 +11,7 @@ import * as FileSystem from 'expo-file-system';
 function ProfileView({ navigation }) {
   const [image, setImage] = useState(undefined);
   const [selectedItems, setSelectedItems] = useState({});
-  const [userData, setUserData] = useState([]);
+  const [user, setUserData] = useState([]);
   const { token } = useAuth();
   const { isLoggedIn, login } = useAuth();
   let [isLoading, setIsLoading] = useState(false);
@@ -152,7 +152,6 @@ function ProfileView({ navigation }) {
       </Text> 
       {/* Have the users email above*/}
  {token && <>
-        <LogoutButton/>
         <View style={styles.modalView}>
           <Text style={styles.textStyle1}>Dietary Restrictions</Text>
           <TouchableOpacity style={selectedItems['gluten_free'] ? styles.selectedMenuItem : styles.menuItem} onPress={() => handlePress('gluten_free')}>
@@ -184,7 +183,7 @@ function ProfileView({ navigation }) {
             >
               <Text style={styles.textStyle2}>Save</Text>
             </TouchableHighlight>
-
+            <LogoutButton style={{ ...styles.openButton, backgroundColor: "green" }}/>
         </View>
         </>}
         {
@@ -192,18 +191,14 @@ function ProfileView({ navigation }) {
     <>
     <TouchableHighlight
               style={{ ...styles.openButton, backgroundColor: "green" }}
-              onPress={() => {
-
-              }}
+              onPress={() => navigation.navigate('Login')}
             >
               <Text style={styles.textStyle2}>Log In</Text>
     </TouchableHighlight>
     
     <TouchableHighlight
       style={{ ...styles.openButton, backgroundColor: "green" }}
-      onPress={() => {
-
-      }}
+      onPress={() => navigation.navigate('SignUp')}
     >
       <Text style={styles.textStyle2}>Sign Up</Text>
     </TouchableHighlight>
@@ -270,7 +265,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     marginBottom: -17.5,
-    marginTop: 50,
+    marginTop: 10,
   },
   name: {
     fontSize: 20,
@@ -325,12 +320,10 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
-  guest: {
-    fontSize: 16,
-    color: 'gray',
-    marginBottom: 20,
-    marginTop: 20,
-    textAlign: 'center',
+  logout: {
+    backgroundColor: 'green',
+    padding: 10,
+    borderRadius: 30,
   },
 });
 
