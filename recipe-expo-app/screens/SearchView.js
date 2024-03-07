@@ -1,42 +1,57 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, ActivityIndicator,Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Pressable, ScrollView, ActivityIndicator, Image } from 'react-native';
 import Recipe from '../components/RecipeComponent';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
 
 function SearchView({ navigation }) {
-  const [search, setSearch] = useState([]);
+  const [search, setSearch] = useState('');
+  const [results, setResults] = useState([]);
   let [error, setError] = useState();
   const API_KEY = '0e05e31e1192449ab972630943bc0865'; 
-  let [isLoading, setIsLoading] = useState(true);
+  let [isLoading, setIsLoading] = useState(false);
 
   async function fetchSearch(query) {
+    setIsLoading(true); // Set isLoading to true while fetching
     try {
         const response = await fetch(
             `https://api.spoonacular.com/recipes/complexSearch?query=${query}&apiKey=${API_KEY}`
         ).then(response => response.json());
-        console.log("Here are the search responses");
-        console.log(response);
-        setSearch(response.results); // Update the suggestions state
+          setResults(response.results);
+          const allIds = results.map(recipe => recipe.id);
+          const promises = allIds.map((item) => {
+            return axios.get(`https://api.spoonacular.com/recipes/${item}/information?includeNutrition=false&apiKey=${API_KEY}`);
+          });
+          const responses = await Promise.all(promises);
+          const data = responses.map((response) => response.data);
+          setResults(data);
+        
     } catch (error) {
         console.error('Error fetching search suggestions:', error);
     }
-    setIsLoading(false);
+    finally {
+      setIsLoading(false); // Set isLoading back to false
+    }
 }
 
-const getSearchResults = () => {
+const handleSearchSubmit = () => {
+  fetchSearch(search); // Call fetchSearch when the button is pressed
+};
+
+const renderRecipes = () => {
   if (isLoading) {
-      return <ActivityIndicator size='large' />;
+    return <ActivityIndicator size="large" />;
   }
   if (error) {
-      return <Text>Oops! {error}</Text>;
+    return <Text>Oops! {error}</Text>;
   }
-
-  return search.map(search => (
-    <View>
-      <Recipe key={search.id} title={search.title} image={search.image}/>
-    </View>
+  return results.map((recipe) => (
+    <Recipe key={recipe.id} id={recipe.id} title={recipe.title} image={recipe.image} navigation={navigation}
+      sourceURL={recipe.sourceUrl} spoonacularSourceURL={recipe.spoonacularSourceUrl}
+    />
   ));
-}
+};
+
   return (
         <ScrollView>
           <View style = {styles.assembler}>
@@ -44,22 +59,23 @@ const getSearchResults = () => {
               <TextInput 
                 style ={styles.input}
                 placeholder='Search Recipes'
-                onChangeText={text => {
-                setSearch([]); // Clear the recipe info when input changes
-                fetchSearch(text); // Fetch search suggestions
-              }}
+                onChangeText={(text) => {
+                  setSearch(text); // Update search state when input changes
+                }}
               >
               </TextInput>
             </View>
               <View style= {styles.button}>
+                <Pressable onPress={handleSearchSubmit}>
                 <Image 
                   source={require('../assets/search.png')}
                   style={styles.image}
                 />
+                </Pressable>
               </View>
           </View>
           <View style = {styles.containerRecipes}>
-              {getSearchResults()}
+            {renderRecipes()}   
           </View>
         </ScrollView>
   );
@@ -105,11 +121,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
+    fontFamily: "Palatino",
   },
   link: {
     color: 'blue',
     fontSize: 16,
     marginVertical: 10,
+    fontFamily: "Palatino",
   },
   image:{
     flex: 0.85,

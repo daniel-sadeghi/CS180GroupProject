@@ -27,10 +27,12 @@ const styles = StyleSheet.create({
     name: {
         flex: 5,
         fontSize: 16,
+        fontFamily: "Palatino",
     },
     price: {
         flex: 1,
         fontSize: 16,
+        fontFamily: "Palatino",
     },
     image: {
         flex: 1,

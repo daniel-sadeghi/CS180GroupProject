@@ -48,7 +48,6 @@ function HomeView({ navigation }) {
                 <Recipe key={response.id} id={response.id} title={response.title} image={response.image} navigation={navigation}
                     sourceURL={response.sourceUrl} spoonacularSourceURL={response.spoonacularSourceUrl}
                 />
-            
         ));
     }
 
@@ -76,10 +75,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
+    fontFamily: "Palatino",
   },
   link: {
     color: 'blue',
     fontSize: 16,
     marginVertical: 10,
+    fontFamily: "Palatino",
   },
 });
