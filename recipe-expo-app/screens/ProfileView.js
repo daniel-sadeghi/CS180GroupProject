@@ -48,6 +48,27 @@ function ProfileView({ navigation }) {
     }
   }, [token]);
 
+  const handleSubmitRestriction = async () => {
+    const selected = Object.keys(selectedItems).filter((item) => selectedItems[item]);
+    const concatenatedString = selected.join(',');
+    console.log(concatenatedString)
+    
+    
+    fetch('https://jwt-postgre-tes.onrender.com/profile/restrictions', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: JSON.stringify({ restriction: concatenatedString }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+      })
+      .catch(err => console.log(err));
+  }
+
   const handlePress = (item) => {
     setSelectedItems(prevState => ({ ...prevState, [item]: !prevState[item] }));
   };
