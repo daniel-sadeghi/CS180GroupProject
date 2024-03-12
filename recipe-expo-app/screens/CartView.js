@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {  View, Text, StyleSheet, ScrollView, SafeAreaView, Button, TouchableOpacity, } from 'react-native';
 import CartItemClickable from '../components/CartItemComponentClickable';
 
