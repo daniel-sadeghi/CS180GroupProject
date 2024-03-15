@@ -19,6 +19,11 @@ const FavoriteButton = ({heartStartState, onPress}) => {
     }
   };
 
+  useEffect(() => {
+    // Update the state when heartStartState changes
+    setHeartToggled(heartStartState);
+  }, [heartStartState]);
+
   return (
     <View>
       <TouchableOpacity onPress={handlePress}>

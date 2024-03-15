@@ -35,7 +35,6 @@ const RecipeView = ({navigation, route}) => {
                 console.log(`Error fetching data from API: ${error.message}`);
                 
             }
-            setIsLoading(false);
         };
 
         const favoriteStartCheck = async () => {
@@ -50,6 +49,7 @@ const RecipeView = ({navigation, route}) => {
             catch (error) {
                 console.error('Error fetching user favorites:', error);
             }
+            setIsLoading(false);
         };
 
         fetchDetails().then(favoriteStartCheck());

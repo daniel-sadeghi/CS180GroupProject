@@ -56,6 +56,9 @@ async function createFavoriteCards(foodIds) {
 
       setFavorites(filteredData);
     }
+    else{
+      setFavorites([]);
+    }
     setIsLoading(false);
   } catch (error) {
     console.error('Error fetching favorite recipes:', error);
@@ -84,8 +87,14 @@ function removeDuplicatesFromArray(arr) {
             try {
               if (token != null) {
                 const response = await fetchFavorites();
+                console.log("favorites currently" , response);
+                if(response.length > 0){
                 const foodIds = await transformFavorites(response);
                 setFavFoodIds(foodIds); // Update favFoodIds state
+                }
+                else{
+                  setFavFoodIds([]);
+                }
               } else {
                 console.log("Not Logged In");
               }
@@ -106,12 +115,17 @@ function removeDuplicatesFromArray(arr) {
       if (isLoading) {
           return <ActivityIndicator size='large' />;
       }
+      if(favorites.length >0){
 
       return favorites.map(favorites => (
               <Recipe key={favorites.id} id={favorites.id} title={favorites.title} image={favorites.image} navigation={navigation}
                   sourceURL={favorites.sourceUrl} spoonacularSourceURL={favorites.spoonacularSourceUrl}
               />
       ));
+      }
+      else{
+        return <Text>Add Recipes to your Favorites to be stored here!</Text>
+      }
   }
 
   return (
