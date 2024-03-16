@@ -9,7 +9,7 @@ const LogoutButton = () => {
   const handleLogout = async () => {
     // Perform any additional cleanup or API calls on logout if needed
     await AsyncStorage.removeItem('favorites');
-    setImage(null);
+    //setImage(null);
     logout();
   };
 
