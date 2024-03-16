@@ -134,6 +134,11 @@ const styles = StyleSheet.create({
     margin: 10,
     fontFamily: "Palatino",
   },
+  loading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   link: {
     color: 'blue',
     fontSize: 16,
