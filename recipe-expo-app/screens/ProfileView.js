@@ -18,31 +18,49 @@ function ProfileView({ navigation }) {
 
   // Call the function when the component mounts or as needed
   useEffect(() => {
-  const fetchUserData = async () => {
-
-    if(token != null){
-      setIsLoading(true); // Set isLoading to true while fetching
-    try {
-      const response = await axios.get('https://jwt-postgre-tes.onrender.com/profile', {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
-      setUserData(response.data);
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-    finally {
-      setIsLoading(false); // Set isLoading back to false
-      setImage(null);
-    }
-    }
-    else{
-      console.log("Using guest context");
-    }
-  };
-    fetchUserData();
-  }, [token]);
+    const fetchUserData = async () => {
+  
+      if(token != null){
+        setIsLoading(true); // Set isLoading to true while fetching
+      try {
+        const response = await axios.get('https://jwt-postgre-tes.onrender.com/profile', {
+          headers: {
+            Authorization: `${token}`,
+          },
+        });
+        console.log(response.data);
+        setUserData(response.data[0]);
+        setImage(response.data[0].image+'?v='+new Date().getTime());
+        const selected = response.data[0]?.restrictions?.split(',')
+  
+  
+        const selectedObj = {};
+        for (const item of selected) {
+          selectedObj[item] = true;
+        }
+        setSelectedItems(selectedObj);
+  
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+      finally {
+        setIsLoading(false); // Set isLoading back to false
+      }
+      }
+      else{
+        console.log("Using guest context");
+      }
+    };
+      if(token){
+        console.log("a")
+        fetchUserData();
+      }
+      else{
+        setIsLoading(false); // Set isLoading back to false
+        setImage(null)
+        setUserData({})
+      }
+    }, [token]);
 
   const handleSubmitRestriction = async () => {
     const selected = Object.keys(selectedItems).filter((item) => selectedItems[item]);
