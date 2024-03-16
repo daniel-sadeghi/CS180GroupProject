@@ -19,9 +19,14 @@ const FavoriteButton = ({heartStartState, onPress}) => {
     }
   };
 
+  useEffect(() => {
+    // Update the state when heartStartState changes
+    setHeartToggled(heartStartState);
+  }, [heartStartState]);
+
   return (
-    <View>
-      <TouchableOpacity onPress={handlePress}>
+    <View testID="FavoriteButton:Container">
+      <TouchableOpacity onPress={handlePress} testID="FavoriteButton:Button:ClickMe">
         <MaterialCommunityIcons
           name={isHeartToggled ? 'heart' : 'heart-outline'}
           size={36}

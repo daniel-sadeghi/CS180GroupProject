@@ -12,7 +12,6 @@ import { useAuth } from '../contexts/AuthContext';
 
 //Route is an object that contains the props passed when using react navigate.
 const RecipeView = ({navigation, route}) => {
-    console.log(route.params);
     const [isLoading, setIsLoading] = useState(true);
     const [response, setResponse] = useState();
     const [error, setError] = useState();
@@ -28,14 +27,19 @@ const RecipeView = ({navigation, route}) => {
     useEffect(()=>{
         const fetchDetails = async () => {
             try {
+                setIsLoading(true);
                 const res = await fetchSpoonGateway(`recipes/${id}/priceBreakdownWidget.json`,['includeNutrition=false']);
+                console.log("response before set:", res);
                 setResponse(res);
+                console.log("response set: " ,response)
                 setTotal(res.ingredients.reduce((a,b) => a+b.price,0));
             } catch (error) {
                 console.log(`Error fetching data from API: ${error.message}`);
                 
             }
-            setIsLoading(false);
+            finally {
+                setIsLoading(false); // Make sure to set isLoading to false regardless of success or failure
+            }
         };
 
         const favoriteStartCheck = async () => {
@@ -52,7 +56,8 @@ const RecipeView = ({navigation, route}) => {
             }
         };
 
-        fetchDetails().then(favoriteStartCheck());
+        fetchDetails();
+        favoriteStartCheck();
         
         navigation.setOptions({
             title: title === '' ? 'No title' : title,
@@ -77,6 +82,7 @@ const RecipeView = ({navigation, route}) => {
     };
 
     const getIngredients = () => {
+        console.log("response: ", response);
         return (
             <View style={{flex:1}}>
                 <View style={styles.flatList}>
@@ -88,7 +94,7 @@ const RecipeView = ({navigation, route}) => {
                 </View>
                 <View style={styles.total}>
                     <Text style={alignItems='left'}>Total Price: {USDFormat(total)} </Text>
-                    <AddToCartButton style={styles.addToCartButton}>
+                    <AddToCartButton style={styles.addToCartButton} ingredients={response.ingredients}>
                         <Text style={{color: "white", fontWeight: "bold", textAlign: "center"}}>Add To Cart</Text>
                     </AddToCartButton>
                     <FavoriteButton heartStartState={isFavorite} onPress={handlePress}/>
@@ -98,12 +104,16 @@ const RecipeView = ({navigation, route}) => {
     }
 
     const loadingIndicator = () => {
+        if(!response){
         return (
             <View style={styles.loading}>
-                <ActivityIndicator size='large' />
+                <ActivityIndicator size='large' testID="loading-indicator"/>
             </View>
         );
+        }
     }
+
+
     return (
         <SafeAreaView style={styles.safeArea}>
             {isLoading ? loadingIndicator() : getIngredients()}

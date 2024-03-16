@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -42,6 +42,7 @@ function LoginView({ navigation }) {
         // The request was made, but the server responded with a status code
         // outside the range of 2xx
         console.error('Server responded with an error:', error.response.status, error.response.data);
+        Alert.alert(error.response.data);
       } else if (error.request) {
         // The request was made but no response was received
         console.error('No response received from the server:', error.request);
