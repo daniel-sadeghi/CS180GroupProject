@@ -14,6 +14,7 @@ const mockNavigation = {
     setOptions: jest.fn(),
   };
 
+
 test('RecipeViews ingredients list renders correctly with a mock route', async () => {
     AsyncStorage.getItem.mockResolvedValue(null);
   // Mock navigation params
@@ -27,18 +28,29 @@ test('RecipeViews ingredients list renders correctly with a mock route', async (
     } 
     };
 
+
   // Render the component with mock data
-  const { getByText, unmount } = render(
-  <AuthProvider><RecipeView route={route} navigation={mockNavigation}/></AuthProvider>);
+  const { getByText, findByText, getByTestId, queryByTestId, unmount } = render(
+  <AuthProvider><RecipeView route={route} navigation={mockNavigation}/></AuthProvider>
+  );
+
+  const loadingIndicator = getByTestId('loading-indicator');
+
+  // Wait for the loading indicator to disappear
+  await waitFor(() => expect(queryByTestId('loading-indicator')).toBeNull());
+
+  // Wait for the "Add To Cart" button to appear
+  const addToCartButton = await findByText('Add To Cart');
+
+  // Now you can make assertions
+  expect(addToCartButton).toBeDefined();
 
   await act(async () => {
-    await waitFor(() => {
-      // Check that the Recipe Ingredients are all rendered
-      const IngredientList = getByText('frozen cauliflower florets','cheese','extra virgin olive oil', 'pasta', 'red couple of pepper flakes',
-      ' green white scallions','white wine', 'whole wheat bread crumbs');
-      expect(IngredientList).toBeDefined();
-    }); 
-  });
+    // Check that the Recipe Ingredients are all rendered
+    const IngredientList = await findByText('frozen cauliflower florets','cheese','extra virgin olive oil', 'pasta', 'red couple of pepper flakes',
+    ' green white scallions','white wine', 'whole wheat bread crumbs');
+    expect(IngredientList).toBeDefined();
+});
 
   // Assert that setOptions was called
   expect(mockNavigation.setOptions).toHaveBeenCalledWith({
