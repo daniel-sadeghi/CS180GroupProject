@@ -34,18 +34,14 @@ function ProfileView({ navigation }) {
     }
     finally {
       setIsLoading(false); // Set isLoading back to false
+      setImage(null);
     }
     }
     else{
       console.log("Using guest context");
     }
   };
-    if(token){
-      fetchUserData();
-    }
-    else{
-      setIsLoading(false); // Set isLoading back to false
-    }
+    fetchUserData();
   }, [token]);
 
   const handleSubmitRestriction = async () => {
